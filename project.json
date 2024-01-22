@@ -1,0 +1,33 @@
+{
+  "s3": {
+    "stage": {
+      "bucket": "test.chalkbeat.org",
+      "path": "wintry-necessity"
+    },
+    "live": {
+      "bucket": "projects.chalkbeat.org",
+      "path": "2024/chi_school_board"
+    }
+  },
+  "styles": {
+    "src/css/seed.less": "build/style.css"
+  },
+  "scripts": {
+    "src/js/main.js": "build/app.js"
+  },
+  "title": "",
+  "description": "",
+  "url": "",
+  "image": "assets/logo.png",
+  "analytics": {
+    "topicIDs": [],
+    "primaryTopic": "",
+    "secondaryTopics": []
+  },
+  "sheets": ["13IacLEswCF1WM4M1CxIPpxkUh5xyv617fCzw0RMEJFM"],
+  "docs": {
+    "story": "1iujMj5bk_bvJ3M9VvgSf-1ZsJhB8Zd0FVwGQyy-0384"
+  },
+  "embedded": false,
+  "production": false
+}

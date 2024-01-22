@@ -1,0 +1,33 @@
+title,body,labels
+Update publication dates,"Check footer, other locations in the document",Launch TODO
+Project credits,,Launch TODO
+Analytics config,"- [ ] Standard events for completion and click interaction
+- [ ] Dimensions set in the project.json file--steal the primary topic, topic ID, and secondary topic IDs from related stories.
+- [ ] Document any custom events in the README",Launch TODO
+Verify page title tags are good,,Launch TODO
+Optimize images,,Launch TODO
+Determine what the publish URL will be,Workshop w/ the engagement team. Sort this out before requesting redirects.,Launch TODO
+Setup retrospective review with editor,What did we learn? How do we do better next time?,Post-launch
+Schedule iteration reviews,,Project Management
+Schedule sprint planning meetings,,Project Management
+Schedule sprint retrospectives,,Project Management
+Let the copy desk know an app is coming,,Project Management
+Copy edit,,Launch TODO
+Email media relations re: press releases,,Launch TODO
+Email comms re: promoting the project in Nipper News,,Launch TODO
+"Social metadata and images (for Twitter, Facebook)",Images should have an aspect ratio of 1.91:1 and be a minimum of 1200 x 630. Verify with debuggers: https://developers.facebook.com/tools/debug/ and https://dev.twitter.com/docs/cards/validation/validator,Launch TODO
+Distribute launch timeline,"Let stakeholders, engagement, social media, etc know what the launch schedule is",Project Management
+Browser testing,"- [ ] Edge 
+- [ ] Chrome (OS X)
+- [ ] Chrome (Android) 
+- [ ] Chrome (Windows)
+- [ ] Chrome (iOS) 
+- [ ] Firefox (OS X)
+- [ ] Firefox (Windows)
+- [ ] Safari (iOS)
+- [ ] Safari (iOS, in-app)",
+Automated performance tests,Lighthouse (accessibility and performance),
+Accessibility testing,"Works in screen reader, does not violate WCAG 2.1",
+Write the team blog post,,Post-launch
+Analytics report,Collect and study data one week after launch,
+Backport new features into the interactive template,,Launch TODO
