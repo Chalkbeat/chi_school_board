@@ -26,7 +26,8 @@ header, footer {
       box-shadow: 4px 4px 4px fade(black, 20%);
       border: 1px solid black;
 
-      &.ES, &.MS { background: @teal; }
+      &.ES { background: @teal; }
+      &.MS { background: @yellow; }
       &.HS { background: @purple; }
     }
   }
@@ -42,4 +43,9 @@ header, footer {
   box-shadow: 20px 20px 4px 4px fade(black, 30%);
   position: relative;
   z-index: 999;
+  color: white;
+
+  input[value="ES"] { accent-color: @teal; }
+  input[value="MS"] { accent-color: @yellow; }
+  input[value="HS"] { accent-color: @purple; }
 }
