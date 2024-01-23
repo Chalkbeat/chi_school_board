@@ -1,4 +1,4 @@
-class ReactiveState {
+export class ReactiveState {
   events = new EventTarget();
   scheduled = false;
   #hashMemory = false;
@@ -32,8 +32,7 @@ class ReactiveState {
   notify() {
     this.scheduled = false;
     // send event
-    var detail = structuredClone(this.raw);
-    this.events.dispatchEvent(new CustomEvent("update", { detail }));
+    this.events.dispatchEvent(new CustomEvent("update", { detail: this.raw }));
     // if hashing is turned on, serialize state
     if (this.#hashMemory) {
       window.location.hash = this.serialize();
@@ -88,5 +87,3 @@ class ReactiveState {
     }
   }
 }
-
-export var state = new ReactiveState();

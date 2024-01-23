@@ -1,6 +1,10 @@
 @import "base";
 @import (inline) "npm://leaflet/dist/leaflet.css";
 
+:root {
+  --seatColor: @yellow;
+}
+
 header, footer {
   z-index: 999;
 }
@@ -20,6 +24,10 @@ header, footer {
     width: 100%;
     height: 100%;
 
+    [hidden] {
+      display: none !important;
+    }
+
     .school-marker {
       background: white;
       border-radius: 100%;
@@ -27,7 +35,7 @@ header, footer {
       border: 1px solid black;
 
       &.ES { background: @teal; }
-      &.MS { background: @yellow; }
+      &.MS { background: @peach; }
       &.HS { background: @purple; }
     }
   }
@@ -46,6 +54,6 @@ header, footer {
   color: white;
 
   input[value="ES"] { accent-color: @teal; }
-  input[value="MS"] { accent-color: @yellow; }
+  input[value="MS"] { accent-color: @peach; }
   input[value="HS"] { accent-color: @purple; }
 }

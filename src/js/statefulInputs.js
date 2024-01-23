@@ -2,7 +2,7 @@
 Behavioral components that update a linked state when their contents change
 */
 
-import { state } from "./state.js";
+import { state } from "./map.js";
 
 class StatefulInput extends HTMLElement {
   constructor() {
