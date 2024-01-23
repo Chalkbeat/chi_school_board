@@ -36,11 +36,11 @@ class ReactiveState {
     this.events.dispatchEvent(new CustomEvent("update", { detail }));
     // if hashing is turned on, serialize state
     if (this.#hashMemory) {
-      this.toHash();
+      window.location.hash = this.serialize();
     }
   }
 
-  toHash() {
+  serialize() {
     var params = new URLSearchParams();
     for (var k in this.raw) {
       var value = this.raw[k];
@@ -49,13 +49,12 @@ class ReactiveState {
       }
       params.set(k, value);
     }
-    window.location.hash = params.toString();
+    return params.toString();
   }
 
-  onHashChange() {
-    // if hashing is not on, skip this
-    if (!this.#hashMemory) return;
+  parse() {
     var hash = window.location.hash.slice(1);
+    var result = {};
     var params = new URLSearchParams(hash);
     for (var [k, v] of params) {
       if (v[0] == "[") {
@@ -64,9 +63,15 @@ class ReactiveState {
       if (v == "true" || v == "false") {
         v = v == "true";
       }
-      this.raw[k] = v;
+      result[k] = v;
     }
-    this.notify();
+    return result;
+  }
+
+  onHashChange() {
+    // if hashing is not on, skip this
+    if (!this.#hashMemory) return;
+    Object.assign(this.data, this.parse());
   }
 
   get hashMemory() {
