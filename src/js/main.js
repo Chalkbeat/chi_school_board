@@ -29,6 +29,8 @@ for (var school of window.DATA) {
   });
   marker.addTo(map);
   marker.bindPopup(school.name);
+  marker.data = school;
+  school.marker = marker;
 }
 
 /*
@@ -45,6 +47,17 @@ for (var school of window.DATA) {
 */
 
 import { state } from "./state";
+Object.assign(state.data, {
+  grades: new Set(["ES", "MS", "HS"])
+});
 
-state.events.addEventListener("update", e => console.log(e.detail));
 window.state = state;
+state.events.addEventListener("update", function({ detail }) {
+  for (var school of window.DATA) {
+    if (detail.grades.has(school.category)) {
+      school.marker.addTo(map)
+    } else {
+      school.marker.remove();
+    }
+  }
+});
