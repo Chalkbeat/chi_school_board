@@ -26,6 +26,7 @@ fetch("./assets/intersected_simpler.geojson").then(async response => {
   layer.addTo(map);
   layer.eachLayer(l => {
     state.data.seatFilter.add(l.feature.properties.name);
+    // TODO: replace this with a panel update
     l.bindPopup(l.feature.properties.name);
   });
   state.data.seatLayer = layer;
@@ -39,23 +40,28 @@ for (var school of window.DATA) {
     })
   });
   marker.addTo(map);
+  // TODO: replace this with a detail panel
   marker.bindPopup(school.name);
   marker.data = school;
   school.marker = marker;
 }
 
 function updateMap(data) {
-  var bounds = new leaflet.LatLngBounds([[41.9, -87.74], [41.9, -87.74]]);
+  var bounds = new leaflet.LatLngBounds();
 
   // paint and filter
   if (data.seatLayer) {
     data.seatLayer.eachLayer(function(layer) {
       var { name } = layer.feature.properties;
       var survives = data.seatFilter.has(name);
-      if (layer._path) layer._path.toggleAttribute("hidden", !survives);
+      // TODO: get base styles from the custom paint function
       layer.setStyle({
-        color: "var(--seatColor)"
+        color: "var(--seatColor)",
+        // set class on first render
+        className: survives ? "" : "hidden"
       });
+      // update after first render
+      if (layer._path) layer._path.classList.toggle("hidden", !survives);
       if (survives) {
         bounds.extend(layer.getBounds());
       }
