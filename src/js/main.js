@@ -1,13 +1,14 @@
-var leaflet = require("leaflet");
-var $ = require("./lib/qsa");
+import leaflet from "leaflet";
+import $ from "./lib/qsa.js";
+import "./statefulInputs.js"
 
 var mapContainer = $.one(".backdrop .map");
 var map = new leaflet.Map(mapContainer, {
-  zoomSnap: .1
+  zoomSnap: .1,
+  scrollWheelZoom: false
 });
-new leaflet.TileLayer("https://{s}.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}", {
-  subdomains: ["services"],
-  attribution: "<a href=\"https://static.arcgis.com/attribution/World_Topo_Map\">Esri</a>"
+new leaflet.TileLayer("https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}", {
+  attribution: "Esri"
 }).addTo(map);
 
 fetch("./assets/intersected_simpler.geojson").then(async response => {
@@ -15,6 +16,7 @@ fetch("./assets/intersected_simpler.geojson").then(async response => {
   var schoolData = new leaflet.GeoJSON(data);
   schoolData.addTo(map);
   var bounds = schoolData.getBounds();
+  // TODO: bounds should position the map based on the scrolling section placement
   map.fitBounds(bounds, { padding: [100, 100] });
 });
 
@@ -28,3 +30,21 @@ for (var school of window.DATA) {
   marker.addTo(map);
   marker.bindPopup(school.name);
 }
+
+/*
+- SoT is the hash, but we don't look at that outside of the last section
+- Three troll arrays for filtering/painting:
+  - district filter
+  - district paint
+  - school filter
+- state object accepts changes (maybe a proxy) and dispatches a debounced update event
+- create custom elements that can automatically dispatch to the state based on their contents?
+  - stateful-checkbox
+  - stateful-radio
+  - stateful-select
+*/
+
+import { state } from "./state";
+
+state.events.addEventListener("update", e => console.log(e.detail));
+window.state = state;

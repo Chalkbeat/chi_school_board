@@ -12,7 +12,40 @@
     <main>
       <div class="backdrop">
         <div class="map"></div>
-      </div>  
+      </div>
+
+      <div class="scroll-block">
+        <stateful-check key="test">
+          <label>
+            <input type="checkbox" checked>
+            Test checkbox
+          </label>
+        </stateful-check>
+
+        <stateful-radio key="radioTest">
+          <label>
+            <input type="radio" name="radioTest" value="A"> A
+          </label>
+          <label>
+            <input type="radio" name="radioTest" value="B"> B
+          </label>
+          <label>
+            <input type="radio" name="radioTest" value="C"> C
+          </label>
+        </stateful-radio>
+
+        <stateful-input key="select">
+          <select value="Yes">
+            <option value="">Default</option>
+            <option>Yes</option>
+            <option>No</option>
+          </select>
+        </stateful-input>
+
+        <stateful-input key="input">
+          <input type="number" value="0">
+        </stateful-input>
+      </div>
     </main>
 
     <%= t.include("partials/_footer.html") %>
