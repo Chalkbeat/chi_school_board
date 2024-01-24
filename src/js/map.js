@@ -1,10 +1,16 @@
 import { ReactiveState } from "./state.js";
 import markerFilters from "./markerFilters.js";
+import districtFilters from "./districtFilters.js";
 
 export var state = new ReactiveState({
   grades: new Set(["ES", "MS", "HS"]),
-  seatFilter: new Set()
+  seatFilter: new Set(),
+  ES: true,
+  MS: true,
+  HS: true,
+  district: ""
 });
+var schoolLookup = {};
 
 window.state = state;
 
@@ -25,6 +31,11 @@ fetch("./assets/intersected_simpler.geojson").then(async response => {
   var layer = new leaflet.GeoJSON(data);
   layer.addTo(map);
   layer.eachLayer(l => {
+    for (var id of l.feature.properties.schools) {
+      if (id in schoolLookup) {
+        schoolLookup[id].districts.add(l.feature.properties.name);
+      }
+    }
     state.data.seatFilter.add(l.feature.properties.name);
     // TODO: replace this with a panel update
     l.bindPopup(l.feature.properties.name);
@@ -33,6 +44,8 @@ fetch("./assets/intersected_simpler.geojson").then(async response => {
 });
 
 for (var school of window.DATA) {
+  schoolLookup[school.id] = school;
+  school.districts = new Set();
   var marker = new leaflet.Marker([school.lat, school.long], {
     icon: new leaflet.DivIcon({
       iconSize: [8, 8],
@@ -47,13 +60,14 @@ for (var school of window.DATA) {
 }
 
 function updateMap(data) {
+  console.log(data);
   var bounds = new leaflet.LatLngBounds();
 
   // paint and filter
   if (data.seatLayer) {
     data.seatLayer.eachLayer(function(layer) {
       var { name } = layer.feature.properties;
-      var survives = data.seatFilter.has(name);
+      var survives = districtFilters.every(f => f(layer.feature, data));
       // TODO: get base styles from the custom paint function
       layer.setStyle({
         color: "var(--seatColor)",

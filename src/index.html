@@ -15,7 +15,7 @@
       </div>
 
       <div class="scroll-block">
-        <stateful-set data-key="grades">
+        <!-- <state-binding-set data-key="grades">
           <% var categories = [
             ["ES", "Elementary"],
             ["MS", "Middle School"],
@@ -27,7 +27,28 @@
             <%= l %>
           </label>
           <% } %>
-        </stateful-set>
+          <hr>
+        </state-binding-set> -->
+        <state-binding>
+          <% var categories = [
+            ["ES", "Elementary"],
+            ["MS", "Middle School"],
+            ["HS", "High School"]
+          ];%>
+          <% for (var [v, l] of categories) { %>
+          <label>
+            <input type="checkbox" checked value="<%= v %>">
+            <%= l %>
+          </label>
+          <% } %>
+          <hr>
+          <select name="district">
+            <option selected value="">All districts</option>
+            <% for (var d of "ABCDEFGHIJKLMNOPQRST") { %>
+            <option>District <%= d%></option>
+            <% } %>
+          </select>
+        </state-binding>
       </div>
     </main>
 

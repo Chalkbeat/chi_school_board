@@ -4,7 +4,7 @@ Behavioral components that update a linked state when their contents change
 
 import { state } from "./map.js";
 
-class StatefulInput extends HTMLElement {
+class StateBinding extends HTMLElement {
   constructor() {
     super();
     this.addEventListener("input", this);
@@ -12,37 +12,43 @@ class StatefulInput extends HTMLElement {
     this.update({ detail: state.raw });
   }
 
-  handleEvent(e) {
-    var key = this.dataset.key;
-    state.data[key] = "valueAsNumber" in e.target ? e.target.valueAsNumber : e.target.value;
+  handleEvent({ target }) {
+    var type = target.tagName != "INPUT" ? target.tagName.toLowerCase() : target.type;
+    switch (type) {
+      case "radio":
+        var { name, value } = target;
+        state.data[name] = value;
+      break;
+
+      case "checkbox":
+        var key = target.name || target.value;
+        var value = target.checked;
+        state.data[key] = value;
+      break;
+
+      default:
+        var key = target.name;
+        var value = "valueAsNumber" in target ? target.valueAsNumber : target.value;
+        state.data[key] = value;
+    }
   }
 
   update({ detail }) {
-    var input = this.querySelector("input, select");
-    var key = this.dataset.key;
-    input.value = detail[key];
+    var inputs = this.querySelectorAll("input, select");
+    for (var input of inputs) {
+      if (input.type == "checkbox" || input.type == "radio") {
+        var key = input.name || input.value;
+        input.checked = detail[key];
+      } else {
+        input.value = detail[input.name];
+      }
+    }
   }
 }
 
-customElements.define("stateful-input", StatefulInput);
+customElements.define("state-binding", StateBinding);
 
-class StatefulCheck extends StatefulInput {
-  handleEvent(e) {
-    var key = e.target.dataset.key || this.dataset.key;
-    state.data[key] = e.target.checked;
-  }
-
-  update({ detail }) {
-    var key = this.dataset.key;
-    var value = detail[key];
-    var input = this.querySelector("input");
-    input.checked = !!value;
-  }
-}
-
-customElements.define("stateful-check", StatefulCheck);
-
-class StatefulSet extends StatefulInput {
+class StateBindingSet extends StateBinding {
   handleEvent(e) {
     var key = this.dataset.key;
     var existing = state.data[key];
@@ -54,6 +60,7 @@ class StatefulSet extends StatefulInput {
       state.data[key][mode](value);
       state.schedule();
     }
+    e.stopPropagation();
   }
 
   update({ detail }) {
@@ -67,22 +74,4 @@ class StatefulSet extends StatefulInput {
   }
 }
 
-customElements.define("stateful-set", StatefulSet);
-
-class StatefulRadio extends StatefulInput {
-  handleEvent(e) {
-    var key = this.dataset.key;
-    var { name, value } = e.target;
-    state.data[key || name] = value;
-  }
-
-  update({ detail }) {
-    var key = this.dataset.key;
-    if (!(key in detail)) return;
-    var value = detail[key];
-    var input = this.querySelector(`input[value="${detail[key]}"]`);
-    if (input) input.checked = true;
-  }
-}
-
-customElements.define("stateful-radio", StatefulRadio);
+customElements.define("state-binding-set", StateBindingSet);

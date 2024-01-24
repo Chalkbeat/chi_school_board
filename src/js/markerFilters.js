@@ -6,7 +6,11 @@ Each should expect the data row and the option state object
 */
 
 export default [
-  function(data, state) {
-    return state.grades.has(data.category)
+  function gradeLevel(data, state) {
+    return state[data.category];
+  },
+  function districtMatch(data, state) {
+    if (!state.district) return true;
+    return data.districts.has(state.district);
   }
 ];
