@@ -104,4 +104,8 @@ function updateMap(data) {
   map.fitBounds(bounds, { padding: [100, 100] });
 }
 
+export function mergeChanges(patch) {
+  Object.assign(state.data, STATE_DEFAULT, patch);
+}
+
 state.addEventListener("update", e => updateMap(e.detail));

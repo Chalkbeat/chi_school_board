@@ -1,5 +1,5 @@
 import "./state-bindings.js"
-import "./map.js";
+import { mergeChanges } from "./map.js";
 
 /*
 
@@ -10,3 +10,5 @@ TODO:
 - Add a map state mutation method
 
 */
+
+document.querySelector(".demo-button").addEventListener("click", () => mergeChanges({ district: "District F" }))
