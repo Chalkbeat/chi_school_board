@@ -20,23 +20,6 @@ const FILTER_SCHEMA = {
 // add the final filter block, which is just defaults
 window.BLOCKS.filters = {};
 
-// process ArchieML values correctly
-for (var value of Object.values(window.BLOCKS)) {
-  for (var k in value) {
-    if (k in FILTER_SCHEMA) {
-      switch (FILTER_SCHEMA[k]) {
-        case Boolean:
-          value[k] = value[k].toLowerCase() == "true";
-          break;
-
-        case Number:
-          value[k] = Number(value[k])
-          break;
-      }
-    }
-  }
-}
-
 function onScroll(e) {
   for (var b of blocks) {
     var bounds = b.getBoundingClientRect();
