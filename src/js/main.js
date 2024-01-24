@@ -11,4 +11,7 @@ TODO:
 
 */
 
-document.querySelector(".demo-button").addEventListener("click", () => mergeChanges({ district: "District F" }))
+document.querySelector(".demo-button").addEventListener("click", () => mergeChanges({
+  district: "District F",
+  ES: false
+}));
