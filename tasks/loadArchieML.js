@@ -20,7 +20,7 @@ module.exports = function(grunt) {
       var contents = grunt.file.read(f);
 
       var parsed = betty.parse(contents, {
-        onFieldName: t => t[0].toLowerCase() + t.slice(1)
+        XonFieldName: t => t[0].toLowerCase() + t.slice(1)
       });
       grunt.data.archieml[name] = parsed;
     });

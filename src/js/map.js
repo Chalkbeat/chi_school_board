@@ -27,7 +27,7 @@ new leaflet.TileLayer("https://services.arcgisonline.com/ArcGIS/rest/services/Ca
 
 // add map markers and link the data together
 var schoolLookup = {};
-for (var school of window.DATA) {
+for (var school of window.SCHOOLS) {
   schoolLookup[school.id] = school;
   school.districts = new Set();
   var marker = new leaflet.Marker([school.lat, school.long], {
@@ -86,12 +86,12 @@ function updateMap(data) {
   }
 
   // update markers
-  var schools = window.DATA.slice();
+  var schools = window.SCHOOLS.slice();
   for (var f of markerFilters) {
     schools = schools.filter(s => f(s, data));
   }
   var survived = new Set(schools);
-  for (var school of window.DATA) {
+  for (var school of window.SCHOOLS) {
     if (survived.has(school)) {
       school.marker.addTo(map);
       bounds.extend(school.marker.getLatLng())

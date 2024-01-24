@@ -14,7 +14,13 @@
         <div class="map"></div>
       </div>
 
-      <div class="scroll-block">
+      <% for (var block of archieml.story.scrolling) { %>
+      <div class="scroll-block" id="<%= block.slug %>">
+        <%= block.text %>
+      </div>
+      <% } %>
+
+      <div class="scroll-block" id="filters">
         <button class="demo-button">DEMO</button>
         <hr>
 
@@ -58,7 +64,8 @@
     <%= t.include("partials/_footer.html") %>
 
     <script>
-      window.DATA = <%= JSON.stringify(json.profiles) %>;
+      window.SCHOOLS = <%= JSON.stringify(json.profiles) %>;
+      window.BLOCKS = <%= JSON.stringify(Object.fromEntries(archieml.story.scrolling.map(b => [b.slug, b.filter]))) %>
     </script>
     <script src="app.js" async></script>
     <%= t.include("partials/_analytics.html") %>
