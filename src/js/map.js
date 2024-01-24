@@ -1,22 +1,21 @@
-import { ReactiveState } from "./state.js";
-import markerFilters from "./markerFilters.js";
-import districtFilters from "./districtFilters.js";
+import leaflet from "leaflet";
+import $ from "./lib/qsa.js";
+import { ReactiveStore } from "./state.js";
+import markerFilters from "./marker-filters.js";
+import districtFilters from "./district-filters.js";
 
-export var state = new ReactiveState({
-  grades: new Set(["ES", "MS", "HS"]),
-  seatFilter: new Set(),
+// default map setup values
+// we use these to provide a starting point
+// but also to merge over in the scrolling blocks
+const STATE_DEFAULT = {
   ES: true,
   MS: true,
   HS: true,
   district: ""
-});
-var schoolLookup = {};
+};
+export var state = new ReactiveStore({ ...STATE_DEFAULT });
 
-window.state = state;
-
-import leaflet from "leaflet";
-import $ from "./lib/qsa.js";
-
+// map setup
 var mapContainer = $.one(".backdrop .map");
 export var map = new leaflet.Map(mapContainer, {
   zoomSnap: .1,
@@ -26,23 +25,8 @@ new leaflet.TileLayer("https://services.arcgisonline.com/ArcGIS/rest/services/Ca
   attribution: "Esri"
 }).addTo(map);
 
-fetch("./assets/intersected_simpler.geojson").then(async response => {
-  var data = await response.json();
-  var layer = new leaflet.GeoJSON(data);
-  layer.addTo(map);
-  layer.eachLayer(l => {
-    for (var id of l.feature.properties.schools) {
-      if (id in schoolLookup) {
-        schoolLookup[id].districts.add(l.feature.properties.name);
-      }
-    }
-    state.data.seatFilter.add(l.feature.properties.name);
-    // TODO: replace this with a panel update
-    l.bindPopup(l.feature.properties.name);
-  });
-  state.data.seatLayer = layer;
-});
-
+// add map markers and link the data together
+var schoolLookup = {};
 for (var school of window.DATA) {
   schoolLookup[school.id] = school;
   school.districts = new Set();
@@ -59,6 +43,25 @@ for (var school of window.DATA) {
   school.marker = marker;
 }
 
+// lazy-load the GeoJSON for the districts and connect it to the map
+fetch("./assets/intersected_simpler.geojson").then(async response => {
+  var data = await response.json();
+  var layer = new leaflet.GeoJSON(data);
+  layer.addTo(map);
+  layer.eachLayer(l => {
+    for (var id of l.feature.properties.schools) {
+      if (id in schoolLookup) {
+        schoolLookup[id].districts.add(l.feature.properties.name);
+      }
+    }
+    // TODO: replace this with a panel update
+    l.bindPopup(l.feature.properties.name);
+  });
+  // by adding it to the state data, we trigger a re-render
+  state.data.seatLayer = layer;
+});
+
+// called whenever the reactive state data changes
 function updateMap(data) {
   console.log(data);
   var bounds = new leaflet.LatLngBounds();
@@ -101,4 +104,4 @@ function updateMap(data) {
   map.fitBounds(bounds, { padding: [100, 100] });
 }
 
-state.events.addEventListener("update", e => updateMap(e.detail));
+state.addEventListener("update", e => updateMap(e.detail));

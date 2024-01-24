@@ -4,11 +4,21 @@ Behavioral components that update a linked state when their contents change
 
 import { state } from "./map.js";
 
+/*
+<state-binding>
+
+This is a basic behavioral component that links select/input to a key in the
+the map state. It's a two-way binding, so when the state changes, the
+component will match as well. Checkboxes are booleans, radio buttons get the
+selected value, and numeric inputs will use valueAsNumber.
+
+*/
+
 class StateBinding extends HTMLElement {
   constructor() {
     super();
     this.addEventListener("input", this);
-    state.events.addEventListener("update", this.update.bind(this));
+    state.addEventListener("update", this.update.bind(this));
     this.update({ detail: state.raw });
   }
 
@@ -47,6 +57,16 @@ class StateBinding extends HTMLElement {
 }
 
 customElements.define("state-binding", StateBinding);
+
+/*
+
+<state-binding-set> 
+
+Provides a special-case for collections of checkboxes, and adds them to a Set
+instead of linking each of them to an individual key. This is useful for
+multi-select scenarios, assuming we don't want to use <select multiple>.
+
+*/
 
 class StateBindingSet extends StateBinding {
   handleEvent(e) {
