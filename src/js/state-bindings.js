@@ -12,6 +12,9 @@ the map state. It's a two-way binding, so when the state changes, the
 component will match as well. Checkboxes are booleans, radio buttons get the
 selected value, and numeric inputs will use valueAsNumber.
 
+All bound input elements should have a name for this to work, just as if they
+were participating in a form.
+
 */
 
 class StateBinding extends HTMLElement {
@@ -25,11 +28,6 @@ class StateBinding extends HTMLElement {
   handleEvent({ target }) {
     var type = target.tagName != "INPUT" ? target.tagName.toLowerCase() : target.type;
     switch (type) {
-      case "radio":
-        var { name, value } = target;
-        state.data[name] = value;
-      break;
-
       case "checkbox":
         var key = target.name || target.value;
         var value = target.checked;
@@ -37,9 +35,11 @@ class StateBinding extends HTMLElement {
       break;
 
       default:
-        var key = target.name;
-        var value = "valueAsNumber" in target ? target.valueAsNumber : target.value;
-        state.data[key] = value;
+        var { name, value } = target;
+        if ("valueAsNumber" in target && typeof target.valueAsNumber == "number") {
+          value = target.valueAsNumber;
+        }
+        state.data[name] = value;
     }
   }
 
