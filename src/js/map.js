@@ -3,6 +3,7 @@ import $ from "./lib/qsa.js";
 import { ReactiveStore } from "./state.js";
 import markerFilters from "./marker-filters.js";
 import districtFilters from "./district-filters.js";
+import debounce from "./lib/debounce.js";
 
 // default map setup values
 // we use these to provide a starting point
@@ -15,6 +16,22 @@ const STATE_DEFAULT = {
 };
 export var state = new ReactiveStore({ ...STATE_DEFAULT });
 
+// padding query
+var media = window.matchMedia("(max-width: 600px)");
+function onMediaQuery() {
+  if (media.matches) {
+    state.raw.padding = { padding: [50, 50] };
+  } else {
+    state.raw.padding = {
+      paddingTopLeft: [window.innerWidth / 2, 100],
+      paddingBottomRight: [100, 100]
+    };
+  }
+}
+media.addEventListener("change", onMediaQuery);
+window.addEventListener("resize", debounce(onMediaQuery));
+onMediaQuery();
+
 // map setup
 var mapContainer = $.one(".backdrop .map");
 export var map = new leaflet.Map(mapContainer, {
@@ -25,11 +42,13 @@ new leaflet.TileLayer("https://services.arcgisonline.com/ArcGIS/rest/services/Ca
   attribution: "Esri"
 }).addTo(map);
 
+var bounds = new leaflet.LatLngBounds();
 // add map markers and link the data together
 var schoolLookup = {};
 for (var school of window.SCHOOLS) {
   schoolLookup[school.id] = school;
   school.districts = new Set();
+  bounds.extend([school.lat, school.long])
   var marker = new leaflet.Marker([school.lat, school.long], {
     icon: new leaflet.DivIcon({
       iconSize: [8, 8],
@@ -42,6 +61,7 @@ for (var school of window.SCHOOLS) {
   marker.data = school;
   school.marker = marker;
 }
+map.fitBounds(bounds);
 
 // lazy-load the GeoJSON for the districts and connect it to the map
 fetch("./assets/intersected_simpler.geojson").then(async response => {
@@ -101,7 +121,7 @@ function updateMap(data) {
   }
 
   // TODO: bounds should position the map based on the scrolling section placement
-  map.fitBounds(bounds, { padding: [100, 100] });
+  map.flyToBounds(bounds, data.padding);
 }
 
 export function mergeChanges(patch) {
