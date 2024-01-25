@@ -15,6 +15,7 @@ const STATE_DEFAULT = {
   district: ""
 };
 export var state = new ReactiveStore({ ...STATE_DEFAULT });
+window.mapState = state;
 
 // padding query
 var media = window.matchMedia("(max-width: 600px)");

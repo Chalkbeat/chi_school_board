@@ -3,18 +3,7 @@
 ReactiveStore is a basic observable data object. Making shallow changes to
 the .data property will cause the object to queue an "update" event. You can
 bypass the proxy by talking to .raw, but you'll need to call schedule
-() afterward. The same is true of nested or complex data structures, such as
-arrays or Sets -- these will not automatically dispatch an event if mutated
-through their methods, but replacing them will:
-
-state.data.array = [...state.data.array, newItem]
-
-or 
-
-state.data.array = state.data.array.filter(d => d != removeItem);
-
-However, this is noisy and churns the GC, so if possible, just mutate it and
-schedule an update.
+() afterward. 
 
 If the state object's .hashMemory property is set to true, it will also mirror
 the URL hash. These updates are live and two-way.
@@ -24,14 +13,33 @@ the URL hash. These updates are live and two-way.
 export class ReactiveStore extends EventTarget {
   scheduled = false;
   #hashMemory = false;
+  proxies = new WeakMap();
 
   constructor(initial = {}) {
     super();
     for (var f of "notify schedule onHashChange".split(" ")) {
       this[f] = this[f].bind(this);
     }
-    var { schedule } = this;
+    var { schedule, proxies } = this;
     var handler = {
+      get(target, property, receiver) {
+        var value = Reflect.get(target, property, receiver);
+        if (value instanceof Object) {
+          if (value instanceof Function) {
+            return (...args) => {
+              target[property](...args);
+              schedule();
+            }
+          }
+          var proxy = proxies.get(value);
+          if (!proxy) {
+            proxy = new Proxy(value, handler);
+            proxies.set(value, proxy);
+          }
+          return proxy;
+        }
+        return value;
+      },
       set(target, property, value) {
         var was = target[property];
         if (value !== was) {
