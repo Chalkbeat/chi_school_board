@@ -24,24 +24,24 @@ export class ReactiveStore extends EventTarget {
     var handler = {
       get(target, property, receiver) {
         var value = Reflect.get(target, property, receiver);
-        if (value instanceof Object) {
-          // it would be cool to use apply() here, but apparently that uses
-          // the proxy as the context, not the original object, so it fails
-          // on built-ins (and probably other items as well)
-          if (value instanceof Function) {
+        switch (typeof value) {
+          case "object":
+            var proxy = proxies.get(value);
+            if (!proxy) {
+              proxy = new Proxy(value, handler);
+              proxies.set(value, proxy);
+            }
+            return proxy;
+
+          case "function":
             return (...args) => {
               target[property](...args);
               schedule();
-            }
-          }
-          var proxy = proxies.get(value);
-          if (!proxy) {
-            proxy = new Proxy(value, handler);
-            proxies.set(value, proxy);
-          }
-          return proxy;
+            };
+
+          default:
+            return value;
         }
-        return value;
       },
       set(target, property, value) {
         var was = target[property];

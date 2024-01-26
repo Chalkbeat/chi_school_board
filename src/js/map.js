@@ -1,8 +1,7 @@
 import leaflet from "leaflet";
 import $ from "./lib/qsa.js";
 import { ReactiveStore } from "./state.js";
-import markerFilters from "./marker-filters.js";
-import districtFilters from "./district-filters.js";
+import { markerFilters, districtFilters } from "./filters.js";
 import debounce from "./lib/debounce.js";
 
 // default map setup values

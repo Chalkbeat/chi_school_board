@@ -11,12 +11,6 @@ document.querySelector(".demo-button").addEventListener("click", () => mergeChan
 var blocks = $(".scroll-block").reverse();
 var currentBlock = null;
 
-const FILTER_SCHEMA = {
-  ES: Boolean,
-  MS: Boolean,
-  HS: Boolean
-};
-
 // add the final filter block, which is just defaults
 window.BLOCKS.filters = {};
 
