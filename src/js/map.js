@@ -1,4 +1,4 @@
-import leaflet from "leaflet";
+import { Map, Marker, GeoJSON, DivIcon, LatLngBounds, TileLayer } from "leaflet/dist/leaflet-src.esm.js";
 import $ from "./lib/qsa.js";
 import { ReactiveStore } from "./state.js";
 import { markerFilters, districtFilters } from "./filters.js";
@@ -34,23 +34,23 @@ onMediaQuery();
 
 // map setup
 var mapContainer = $.one(".backdrop .map");
-export var map = new leaflet.Map(mapContainer, {
+export var map = new Map(mapContainer, {
   zoomSnap: .1,
   scrollWheelZoom: false
 });
-new leaflet.TileLayer("https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}", {
+new TileLayer("https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}", {
   attribution: "Esri"
 }).addTo(map);
 
-var bounds = new leaflet.LatLngBounds();
+var bounds = new LatLngBounds();
 // add map markers and link the data together
 var schoolLookup = {};
 for (var school of window.SCHOOLS) {
   schoolLookup[school.id] = school;
   school.districts = new Set();
   bounds.extend([school.lat, school.long])
-  var marker = new leaflet.Marker([school.lat, school.long], {
-    icon: new leaflet.DivIcon({
+  var marker = new Marker([school.lat, school.long], {
+    icon: new DivIcon({
       iconSize: [8, 8],
       className: ["school-marker", school.category, school.secondary].join(" ")
     })
@@ -66,7 +66,7 @@ map.fitBounds(bounds);
 // lazy-load the GeoJSON for the districts and connect it to the map
 fetch("./assets/intersected_simpler.geojson").then(async response => {
   var data = await response.json();
-  var layer = new leaflet.GeoJSON(data);
+  var layer = new GeoJSON(data);
   layer.addTo(map);
   layer.eachLayer(l => {
     for (var id of l.feature.properties.schools) {
@@ -84,7 +84,7 @@ fetch("./assets/intersected_simpler.geojson").then(async response => {
 // called whenever the reactive state data changes
 function updateMap(data) {
   console.log(data);
-  var bounds = new leaflet.LatLngBounds();
+  var bounds = new LatLngBounds();
 
   // paint and filter
   if (data.seatLayer) {

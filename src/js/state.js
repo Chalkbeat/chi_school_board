@@ -33,6 +33,9 @@ export class ReactiveStore extends EventTarget {
             }
             return proxy;
 
+          // trap method calls and observe them
+          // would be cool to use handler.apply() but
+          // it snags on Set methods
           case "function":
             return (...args) => {
               target[property](...args);
