@@ -38,9 +38,37 @@ export var map = new Map(mapContainer, {
   zoomSnap: .1,
   scrollWheelZoom: false
 });
-new TileLayer("https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}", {
-  attribution: "Esri"
+// https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg
+var tiles = new TileLayer("./assets/synced/tiles/carto_light_nolabels/{z}/{x}/{y}.png", {
+  minZoom: 8,
+  maxZoom: 13,
+  attribution: "Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL."
 }).addTo(map);
+window.map = map;
+window.tiles = tiles;
+
+// var tileBounds = [[42.488,-88.795], [41.182,-86.627]];
+// var zooms = [8, 9, 10, 11, 12, 13];
+// var out = [];
+
+// var tileRanges = zooms.map(function(z) {
+//   var [nw, se] = tileBounds.map(p => map.project(p, z));
+//   var pnw = [nw.x / 256, nw.y / 256].map(n => Math.floor(n));
+//   var pse = [se.x / 256, se.y / 256].map(n => Math.ceil(n));
+//   out.push({
+//     z,
+//     startX: pnw[0],
+//     // endX: pse[0],
+//     startY: pnw[1],
+//     // endY: pse[1],
+//     xRange: pse[0] - pnw[0],
+//     yRange: pse[1] - pnw[1]
+//   })
+// });
+
+// console.table(out);
+
+map.on("click", e => console.log(e.latlng));
 
 var bounds = new LatLngBounds();
 // add map markers and link the data together
@@ -79,7 +107,6 @@ fetch("./assets/sb3757-intersected.geojson").then(async response => {
   });
   // by adding it to the state data, we trigger a re-render
   state.data.seatLayer = layer;
-  console.log(schoolLookup);
 });
 
 // called whenever the reactive state data changes
