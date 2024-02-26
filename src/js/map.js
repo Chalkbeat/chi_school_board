@@ -71,12 +71,12 @@ window.tiles = tiles;
 // });
 // console.table(out);
 
-map.on("click", e => console.log(e.latlng));
+map.on("click", e => state.data.district = state.data.selectedSchool = "");
 
 var bounds = new LatLngBounds();
 // add map markers and link the data together
 var schoolLookup = {};
-for (var school of window.SCHOOLS) {
+for (let school of window.SCHOOLS) {
   schoolLookup[school.id] = school;
   school.districts = new Set();
   bounds.extend([school.lat, school.long])
@@ -89,6 +89,7 @@ for (var school of window.SCHOOLS) {
   marker.addTo(map);
   // TODO: replace this with a detail panel
   marker.bindPopup(school.name);
+  marker.on("click", e => state.data.selectedSchool = school);
   marker.data = school;
   school.marker = marker;
 }
@@ -106,6 +107,7 @@ fetch("./assets/sb3757-intersected.geojson").then(async response => {
       }
     }
     // TODO: replace this with a panel update
+    l.on("click", e => state.data.district = l.feature.properties.district);
     l.bindPopup("District " + l.feature.properties.district);
   });
   // by adding it to the state data, we trigger a re-render
@@ -114,7 +116,6 @@ fetch("./assets/sb3757-intersected.geojson").then(async response => {
 
 // called whenever the reactive state data changes
 function updateMap(data) {
-  console.log(data);
   var bounds = new LatLngBounds();
 
   // paint and filter

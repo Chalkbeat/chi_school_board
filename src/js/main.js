@@ -1,5 +1,5 @@
 import "./state-bindings.js"
-import { mergeChanges } from "./map.js";
+import { mergeChanges, state } from "./map.js";
 import $ from "./lib/qsa";
 
 /* TEST BUTTON */
@@ -29,5 +29,24 @@ function onScroll(e) {
     }
   }
 }
-
 window.addEventListener("scroll", onScroll);
+
+// TODO: this should probably be a component with a better approach to templating
+var schoolDetailContainer = $.one(".school-detail");
+state.addEventListener("update", function({ detail: data }) {
+  console.log(data.selectedSchool);
+  if (data.selectedSchool) {
+    var school = data.selectedSchool;
+    schoolDetailContainer.innerHTML = `
+<hr>
+Selected School: ${school.name}
+<ul>
+  <li> Category: ${({ ES: "Elementary", MS: "Middle", HS: "High" })[school.category]} school
+  <li> Type: ${school.secondary}
+  <li> Associated districts: ${String(school.district || "none").replace(/,/g, ", ")}
+</ul>
+    `
+  } else {
+    schoolDetailContainer.innerHTML = "";
+  }
+});
