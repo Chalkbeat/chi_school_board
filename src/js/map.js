@@ -37,21 +37,24 @@ var mapContainer = $.one(".backdrop .map");
 export var map = new Map(mapContainer, {
   zoomSnap: .1,
   scrollWheelZoom: false,
-  maxBounds: [[42.488,-88.795], [41.182,-86.627]],
+  maxBounds: [[42.188,-88.795], [41.182,-86.627]],
+  maxBoundsViscosity: 1
 });
 // https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg
 var tiles = new TileLayer("./assets/synced/tiles/carto_light_nolabels/{z}/{x}/{y}.png", {
-  minZoom: 8,
+  minZoom: 9,
   maxZoom: 13,
+  updateWhenZooming: false,
+  updateWhenIdle: true,
   attribution: "Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL."
 }).addTo(map);
 window.map = map;
 window.tiles = tiles;
 
+// // Generates a list of tiles to download for local caching
 // var tileBounds = [[42.488,-88.795], [41.182,-86.627]];
 // var zooms = [8, 9, 10, 11, 12, 13];
 // var out = [];
-
 // var tileRanges = zooms.map(function(z) {
 //   var [nw, se] = tileBounds.map(p => map.project(p, z));
 //   var pnw = [nw.x / 256, nw.y / 256].map(n => Math.floor(n));
@@ -66,7 +69,6 @@ window.tiles = tiles;
 //     yRange: pse[1] - pnw[1]
 //   })
 // });
-
 // console.table(out);
 
 map.on("click", e => console.log(e.latlng));
