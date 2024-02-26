@@ -36,7 +36,8 @@ onMediaQuery();
 var mapContainer = $.one(".backdrop .map");
 export var map = new Map(mapContainer, {
   zoomSnap: .1,
-  scrollWheelZoom: false
+  scrollWheelZoom: false,
+  maxBounds: [[42.488,-88.795], [41.182,-86.627]],
 });
 // https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg
 var tiles = new TileLayer("./assets/synced/tiles/carto_light_nolabels/{z}/{x}/{y}.png", {
