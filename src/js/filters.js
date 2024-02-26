@@ -11,13 +11,13 @@ export var markerFilters = [
   },
   function districtMatch(data, state) {
     if (!state.district) return true;
-    return data.districts.has(state.district);
+    return data.districts.has(state.district * 1);
   }
 ];
 
 export var districtFilters = [
   function singleDistrict(feature, state) {
     if (!state.district) return true;
-    return state.district == feature.properties.name;
+    return state.district == feature.properties.district;
   }
 ]

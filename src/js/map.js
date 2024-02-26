@@ -64,21 +64,22 @@ for (var school of window.SCHOOLS) {
 map.fitBounds(bounds);
 
 // lazy-load the GeoJSON for the districts and connect it to the map
-fetch("./assets/intersected_simpler.geojson").then(async response => {
+fetch("./assets/sb3757-intersected.geojson").then(async response => {
   var data = await response.json();
   var layer = new GeoJSON(data);
   layer.addTo(map);
   layer.eachLayer(l => {
-    for (var id of l.feature.properties.schools) {
+    for (var id of l.feature.properties.schools.split(", ").map(Number)) {
       if (id in schoolLookup) {
-        schoolLookup[id].districts.add(l.feature.properties.name);
+        schoolLookup[id].districts.add(l.feature.properties.district);
       }
     }
     // TODO: replace this with a panel update
-    l.bindPopup(l.feature.properties.name);
+    l.bindPopup("District " + l.feature.properties.district);
   });
   // by adding it to the state data, we trigger a re-render
   state.data.seatLayer = layer;
+  console.log(schoolLookup);
 });
 
 // called whenever the reactive state data changes

@@ -4,7 +4,7 @@ import $ from "./lib/qsa";
 
 /* TEST BUTTON */
 document.querySelector(".demo-button").addEventListener("click", () => mergeChanges({
-  district: "District F",
+  district: 1,
   ES: false
 }));
 
