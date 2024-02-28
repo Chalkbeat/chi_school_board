@@ -101,7 +101,7 @@ fetch("./assets/sb3757-intersected.geojson").then(async response => {
   var layer = new GeoJSON(data);
   layer.addTo(map);
   layer.eachLayer(l => {
-    for (var id of l.feature.properties.schools.split(", ").map(Number)) {
+    for (var id of l.feature.properties.schools.split(", ")) {
       if (id in schoolLookup) {
         schoolLookup[id].districts.add(l.feature.properties.district);
       }
