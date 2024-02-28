@@ -112,7 +112,7 @@ var loadedSeats = new Promise(async (ok, fail) => {
   // by adding it to the state data, we trigger a re-render
   state.data.seatLayer = layer;
   ok(layer);
-})
+});
 
 // connect districts and schools when both are loaded
 // this should probably be handled during baking at some point
@@ -127,6 +127,24 @@ Promise.all([loadedProfiles, loadedSeats]).then(([schools, layer]) => {
     l.on("click", e => state.data.district = l.feature.properties.district);
     l.bindPopup("District " + l.feature.properties.district);
   });
+});
+
+// load enrollment data
+// this is particularly large, so it needs to be async
+var loadedEnrollment = new Promise(async (ok, fail) => {
+  var response = await fetch("./enrollment.json");
+  var data = await response.json();
+  ok(data);
+});
+
+// connect enrollment to schools
+Promise.all([loadedProfiles, loadedEnrollment]).then(([schools, enrollment]) => {
+  for (var school of schools) {
+    school.enrollment = enrollment[school.id]
+    if (!school?.enrollment?.absolute) {
+      console.log(school);
+    }
+  }
 });
 
 // called whenever the reactive state data changes
