@@ -76,30 +76,47 @@ map.on("click", e => state.data.district = state.data.selectedSchool = "");
 var bounds = new LatLngBounds();
 // add map markers and link the data together
 var schoolLookup = {};
-for (let school of window.SCHOOLS) {
-  schoolLookup[school.id] = school;
-  school.districts = new Set();
-  bounds.extend([school.lat, school.long])
-  var marker = new Marker([school.lat, school.long], {
-    icon: new DivIcon({
-      iconSize: [8, 8],
-      className: ["school-marker", school.category, school.secondary].join(" ")
-    })
-  });
-  marker.addTo(map);
-  // TODO: replace this with a detail panel
-  marker.bindPopup(school.name);
-  marker.on("click", e => state.data.selectedSchool = school);
-  marker.data = school;
-  school.marker = marker;
-}
-map.fitBounds(bounds);
+
+var loadedProfiles = new Promise(async (ok, fail) => {
+  var response = await fetch("./profiles.json")
+  var schools = await response.json();
+  state.data.schools = schools;
+  for (let school of schools) {
+    schoolLookup[school.id] = school;
+    school.districts = new Set();
+    bounds.extend([school.lat, school.long])
+    var marker = new Marker([school.lat, school.long], {
+      icon: new DivIcon({
+        iconSize: [8, 8],
+        className: ["school-marker", school.category, school.secondary].join(" ")
+      })
+    });
+    marker.addTo(map);
+    // TODO: replace this with a detail panel
+    marker.bindPopup(school.name);
+    marker.on("click", e => state.data.selectedSchool = school);
+    marker.data = school;
+    school.marker = marker;
+  }
+  map.fitBounds(bounds);
+  ok(schools);
+});
 
 // lazy-load the GeoJSON for the districts and connect it to the map
-fetch("./assets/sb3757-intersected.geojson").then(async response => {
+var loadedSeats = new Promise(async (ok, fail) => {
+  var response = await fetch("./assets/sb3757-intersected.geojson");
   var data = await response.json();
   var layer = new GeoJSON(data);
   layer.addTo(map);
+  
+  // by adding it to the state data, we trigger a re-render
+  state.data.seatLayer = layer;
+  ok(layer);
+})
+
+// connect districts and schools when both are loaded
+// this should probably be handled during baking at some point
+Promise.all([loadedProfiles, loadedSeats]).then(([schools, layer]) => {
   layer.eachLayer(l => {
     for (var id of l.feature.properties.schools.split(", ")) {
       if (id in schoolLookup) {
@@ -110,8 +127,6 @@ fetch("./assets/sb3757-intersected.geojson").then(async response => {
     l.on("click", e => state.data.district = l.feature.properties.district);
     l.bindPopup("District " + l.feature.properties.district);
   });
-  // by adding it to the state data, we trigger a re-render
-  state.data.seatLayer = layer;
 });
 
 // called whenever the reactive state data changes
@@ -137,22 +152,23 @@ function updateMap(data) {
     })
   }
 
-  // update markers
-  var schools = window.SCHOOLS.slice();
-  for (var f of markerFilters) {
-    schools = schools.filter(s => f(s, data));
-  }
-  var survived = new Set(schools);
-  for (var school of window.SCHOOLS) {
-    if (survived.has(school)) {
-      school.marker.addTo(map);
-      bounds.extend(school.marker.getLatLng())
-    } else {
-      school.marker.remove();
+  if (data.schools) {
+    // update markers
+    var filtered = data.schools.slice();
+    for (var f of markerFilters) {
+      filtered = filtered.filter(s => f(s, data));
+    }
+    var survived = new Set(filtered);
+    for (var school of data.schools) {
+      if (survived.has(school)) {
+        school.marker.addTo(map);
+        bounds.extend(school.marker.getLatLng())
+      } else {
+        school.marker.remove();
+      }
     }
   }
 
-  // TODO: bounds should position the map based on the scrolling section placement
   map.flyToBounds(bounds, data.padding);
 }
 

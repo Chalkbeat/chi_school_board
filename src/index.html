@@ -66,7 +66,6 @@
     <%= t.include("partials/_footer.html") %>
 
     <script>
-      window.SCHOOLS = <%= JSON.stringify(json.profiles) %>;
       window.BLOCKS = <%= JSON.stringify(Object.fromEntries(archieml.story.scrolling.map(b => [b.slug, b.filter]))) %>
     </script>
     <script src="app.js" async></script>

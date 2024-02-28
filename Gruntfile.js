@@ -19,13 +19,15 @@ module.exports = function(grunt) {
     "copy",
     "bundle",
     "less",
-    "template"
+    "template",
+    "bake"
   ]);
   grunt.registerTask("quick", "Build without assets", [
     "clean",
     "bundle",
     "less",
-    "template"
+    "template",
+    "bake"
   ]);
   grunt.registerTask("serve", "Start the dev server", ["connect:dev", "watch"]);
   grunt.registerTask("default", ["clean", "static", "serve"]);

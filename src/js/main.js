@@ -34,7 +34,6 @@ window.addEventListener("scroll", onScroll);
 // TODO: this should probably be a component with a better approach to templating
 var schoolDetailContainer = $.one(".school-detail");
 state.addEventListener("update", function({ detail: data }) {
-  console.log(data.selectedSchool);
   if (data.selectedSchool) {
     var school = data.selectedSchool;
     schoolDetailContainer.innerHTML = `
