@@ -2,7 +2,12 @@ import { Map, Marker, GeoJSON, DivIcon, LatLngBounds, TileLayer } from "leaflet/
 import $ from "./lib/qsa.js";
 import { ReactiveStore } from "./state.js";
 import { markerFilters, districtFilters } from "./filters.js";
-import debounce from "./lib/debounce.js";
+
+// utility function for async dependencies
+async function after(...args) {
+  var callback = args.pop();
+  Promise.all(args).then((result) => callback(...result));
+}
 
 // default map setup values
 // we use these to provide a starting point
@@ -16,6 +21,9 @@ const STATE_DEFAULT = {
 export var state = new ReactiveStore({ ...STATE_DEFAULT });
 window.mapState = state;
 
+// other globals
+var schoolLookup = {};
+
 // padding query
 var media = window.matchMedia("(max-width: 600px)");
 function onMediaQuery() {
@@ -28,18 +36,20 @@ function onMediaQuery() {
     };
   }
 }
-media.addEventListener("change", onMediaQuery);
-window.addEventListener("resize", debounce(onMediaQuery));
 onMediaQuery();
+media.addEventListener("change", onMediaQuery);
 
 // map setup
 var mapContainer = $.one(".backdrop .map");
+var maxBounds = [[42.188,-88.795], [41.182,-86.627]]
 export var map = new Map(mapContainer, {
+  maxBounds,
   zoomSnap: .1,
   scrollWheelZoom: false,
-  maxBounds: [[42.188,-88.795], [41.182,-86.627]],
   maxBoundsViscosity: 1
 });
+map.fitBounds(maxBounds);
+
 // https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg
 var tiles = new TileLayer("./assets/synced/tiles/carto_light_nolabels/{z}/{x}/{y}.png", {
   minZoom: 9,
@@ -51,32 +61,7 @@ var tiles = new TileLayer("./assets/synced/tiles/carto_light_nolabels/{z}/{x}/{y
 window.map = map;
 window.tiles = tiles;
 
-// // Generates a list of tiles to download for local caching
-// var tileBounds = [[42.488,-88.795], [41.182,-86.627]];
-// var zooms = [8, 9, 10, 11, 12, 13];
-// var out = [];
-// var tileRanges = zooms.map(function(z) {
-//   var [nw, se] = tileBounds.map(p => map.project(p, z));
-//   var pnw = [nw.x / 256, nw.y / 256].map(n => Math.floor(n));
-//   var pse = [se.x / 256, se.y / 256].map(n => Math.ceil(n));
-//   out.push({
-//     z,
-//     startX: pnw[0],
-//     // endX: pse[0],
-//     startY: pnw[1],
-//     // endY: pse[1],
-//     xRange: pse[0] - pnw[0],
-//     yRange: pse[1] - pnw[1]
-//   })
-// });
-// console.table(out);
-
-map.on("click", e => state.data.district = state.data.selectedSchool = "");
-
-var bounds = new LatLngBounds();
 // add map markers and link the data together
-var schoolLookup = {};
-
 var loadedProfiles = new Promise(async (ok, fail) => {
   var response = await fetch("./profiles.json")
   var schools = await response.json();
@@ -84,7 +69,6 @@ var loadedProfiles = new Promise(async (ok, fail) => {
   for (let school of schools) {
     schoolLookup[school.id] = school;
     school.districts = new Set();
-    bounds.extend([school.lat, school.long])
     var marker = new Marker([school.lat, school.long], {
       icon: new DivIcon({
         iconSize: [8, 8],
@@ -98,7 +82,6 @@ var loadedProfiles = new Promise(async (ok, fail) => {
     marker.data = school;
     school.marker = marker;
   }
-  map.fitBounds(bounds);
   ok(schools);
 });
 
@@ -116,7 +99,7 @@ var loadedSeats = new Promise(async (ok, fail) => {
 
 // connect districts and schools when both are loaded
 // this should probably be handled during baking at some point
-Promise.all([loadedProfiles, loadedSeats]).then(([schools, layer]) => {
+after(loadedProfiles, loadedSeats, (schools, layer) => {
   layer.eachLayer(l => {
     for (var id of l.feature.properties.schools.split(", ")) {
       if (id in schoolLookup) {
@@ -138,21 +121,19 @@ var loadedEnrollment = new Promise(async (ok, fail) => {
 });
 
 // connect enrollment to schools
-Promise.all([loadedProfiles, loadedEnrollment]).then(([schools, enrollment]) => {
+after(loadedProfiles, loadedEnrollment, (schools, enrollment) => {
   for (var school of schools) {
     school.enrollment = enrollment[school.id]
-    if (!school?.enrollment?.absolute) {
-      console.log(school);
-    }
   }
 });
 
 // called whenever the reactive state data changes
 function updateMap(data) {
-  var bounds = new LatLngBounds();
+  var bounds;
 
   // paint and filter
   if (data.seatLayer) {
+    if (!bounds) bounds = new LatLngBounds();
     data.seatLayer.eachLayer(function(layer) {
       var { name } = layer.feature.properties;
       var survives = districtFilters.every(f => f(layer.feature, data));
@@ -172,6 +153,7 @@ function updateMap(data) {
 
   if (data.schools) {
     // update markers
+    if (!bounds) bounds = new LatLngBounds();
     var filtered = data.schools.slice();
     for (var f of markerFilters) {
       filtered = filtered.filter(s => f(s, data));
@@ -187,7 +169,7 @@ function updateMap(data) {
     }
   }
 
-  map.flyToBounds(bounds, data.padding);
+  if (bounds) map.flyToBounds(bounds, data.padding);
 }
 
 export function mergeChanges(patch) {
@@ -195,3 +177,24 @@ export function mergeChanges(patch) {
 }
 
 state.addEventListener("update", e => updateMap(e.detail));
+map.on("click", e => state.data.district = state.data.selectedSchool = "");
+
+// // Generates a list of tiles to download for local caching
+// var tileBounds = [[42.488,-88.795], [41.182,-86.627]];
+// var zooms = [8, 9, 10, 11, 12, 13];
+// var out = [];
+// var tileRanges = zooms.map(function(z) {
+//   var [nw, se] = tileBounds.map(p => map.project(p, z));
+//   var pnw = [nw.x / 256, nw.y / 256].map(n => Math.floor(n));
+//   var pse = [se.x / 256, se.y / 256].map(n => Math.ceil(n));
+//   out.push({
+//     z,
+//     startX: pnw[0],
+//     // endX: pse[0],
+//     startY: pnw[1],
+//     // endY: pse[1],
+//     xRange: pse[0] - pnw[0],
+//     yRange: pse[1] - pnw[1]
+//   })
+// });
+// console.table(out);
