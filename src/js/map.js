@@ -6,7 +6,7 @@ import { markerFilters, districtFilters } from "./filters.js";
 // utility function for async dependencies
 async function after(...args) {
   var callback = args.pop();
-  Promise.all(args).then((result) => callback(...result));
+  return Promise.all(args).then((result) => callback(...result));
 }
 
 // default map setup values
@@ -20,9 +20,6 @@ const STATE_DEFAULT = {
 };
 export var state = new ReactiveStore({ ...STATE_DEFAULT });
 window.mapState = state;
-
-// other globals
-var schoolLookup = {};
 
 // padding query
 var media = window.matchMedia("(max-width: 600px)");
@@ -67,8 +64,7 @@ var loadedProfiles = new Promise(async (ok, fail) => {
   var schools = await response.json();
   state.data.schools = schools;
   for (let school of schools) {
-    schoolLookup[school.id] = school;
-    school.districts = new Set();
+    school.districts = new Set(school.district);
     var marker = new Marker([school.lat, school.long], {
       icon: new DivIcon({
         iconSize: [8, 8],
@@ -101,11 +97,6 @@ var loadedSeats = new Promise(async (ok, fail) => {
 // this should probably be handled during baking at some point
 after(loadedProfiles, loadedSeats, (schools, layer) => {
   layer.eachLayer(l => {
-    for (var id of l.feature.properties.schools.split(", ")) {
-      if (id in schoolLookup) {
-        schoolLookup[id].districts.add(l.feature.properties.district);
-      }
-    }
     // TODO: replace this with a panel update
     l.on("click", e => state.data.district = l.feature.properties.district);
     l.bindPopup("District " + l.feature.properties.district);
