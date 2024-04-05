@@ -9,14 +9,14 @@
     <%= t.include("partials/_header.html") %>
 
     
+    <div class="backdrop">
+      <div class="map"></div>
+    </div>
     <main>
-      <div class="backdrop">
-        <div class="map"></div>
-      </div>
 
       <% for (var block of archieml.story.scrolling) { %>
       <div class="scroll-block" id="<%= block.slug %>">
-        <%= block.text %>
+        <%= t.renderMarkdown(block.text) %>
       </div>
       <% } %>
 

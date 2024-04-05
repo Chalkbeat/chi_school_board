@@ -9,6 +9,11 @@ header, footer {
   z-index: 999;
 }
 
+path.leaflet-interactive {
+  transition-property: fill, stroke;
+  transition-duration: .4s;
+}
+
 .backdrop {
   position: fixed;
   top: 0;
@@ -34,9 +39,9 @@ header, footer {
       box-shadow: 4px 4px 4px fade(black, 20%);
       border: 1px solid black;
 
-      &.ES { background: @teal; }
-      &.MS { background: @peach; }
-      &.HS { background: @purple; }
+      [data-school-mode="type"] &.ES { background: @teal; }
+      [data-school-mode="type"] &.MS { background: @peach; }
+      [data-school-mode="type"] &.HS { background: @purple; }
     }
   }
 }
@@ -47,10 +52,19 @@ header, footer {
   max-width: 600px;
   padding: 20px;
   background: black;
-  box-shadow: 20px 20px 4px 4px fade(black, 30%);
+  box-shadow: 20px 20px 16px fade(black, 30%);
   position: relative;
   z-index: 999;
   color: white;
+
+  &:first-child {
+    margin-top: 60vh;
+  }
+
+  @media @desktop {
+    margin-left: 200px;
+    max-width: 400px;
+  }
 
   input[value="ES"] { accent-color: @teal; }
   input[value="MS"] { accent-color: @peach; }

@@ -12,7 +12,7 @@ var blocks = $(".scroll-block").reverse();
 var currentBlock = null;
 
 // add the final filter block, which is just defaults
-window.BLOCKS.filters = {};
+window.BLOCKS.filters = { schoolTheme: "type" };
 
 function onScroll(e) {
   for (var b of blocks) {
@@ -25,11 +25,13 @@ function onScroll(e) {
       var filterSetup = window.BLOCKS[id];
       if (!filterSetup) return;
       mergeChanges(filterSetup);
+      document.body.dataset.schoolMode = filterSetup.schoolTheme;
       break;
     }
   }
 }
 window.addEventListener("scroll", onScroll);
+onScroll();
 
 // TODO: this should probably be a component with a better approach to templating
 var schoolDetailContainer = $.one(".school-detail");

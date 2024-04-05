@@ -1,7 +1,7 @@
 import { Map, Marker, GeoJSON, DivIcon, LatLngBounds, TileLayer } from "leaflet/dist/leaflet-src.esm.js";
 import $ from "./lib/qsa.js";
 import { ReactiveStore } from "./state.js";
-import { markerFilters, districtFilters } from "./filters.js";
+import { markerFilters, districtFilters, districtThemes } from "./filters.js";
 
 // utility function for async dependencies
 async function after(...args) {
@@ -87,20 +87,15 @@ var loadedSeats = new Promise(async (ok, fail) => {
   var data = await response.json();
   var layer = new GeoJSON(data);
   layer.addTo(map);
+
+  layer.eachLayer(l => {
+    l.on("click", e => state.data.district = l.feature.properties.district);
+    l.bindPopup("District " + l.feature.properties.district);
+  });
   
   // by adding it to the state data, we trigger a re-render
   state.data.seatLayer = layer;
   ok(layer);
-});
-
-// connect districts and schools when both are loaded
-// this should probably be handled during baking at some point
-after(loadedProfiles, loadedSeats, (schools, layer) => {
-  layer.eachLayer(l => {
-    // TODO: replace this with a panel update
-    l.on("click", e => state.data.district = l.feature.properties.district);
-    l.bindPopup("District " + l.feature.properties.district);
-  });
 });
 
 // load enrollment data
@@ -124,19 +119,19 @@ function updateMap(data) {
 
   // paint and filter
   if (data.seatLayer) {
-    if (!bounds) bounds = new LatLngBounds();
+    var paint = districtThemes[data.theme] || districtThemes.highlighter;
     data.seatLayer.eachLayer(function(layer) {
       var { name } = layer.feature.properties;
       var survives = districtFilters.every(f => f(layer.feature, data));
       // TODO: get base styles from the custom paint function
       layer.setStyle({
-        color: "var(--seatColor)",
-        // set class on first render
-        className: survives ? "" : "hidden"
+        className: survives ? "" : "hidden",
+        ...paint(layer.feature.properties)
       });
       // update after first render
       if (layer._path) layer._path.classList.toggle("hidden", !survives);
       if (survives) {
+        if (!bounds) bounds = new LatLngBounds();
         bounds.extend(layer.getBounds());
       }
     })
@@ -144,7 +139,6 @@ function updateMap(data) {
 
   if (data.schools) {
     // update markers
-    if (!bounds) bounds = new LatLngBounds();
     var filtered = data.schools.slice();
     for (var f of markerFilters) {
       filtered = filtered.filter(s => f(s, data));
@@ -153,6 +147,7 @@ function updateMap(data) {
     for (var school of data.schools) {
       if (survived.has(school)) {
         school.marker.addTo(map);
+        if (!bounds) bounds = new LatLngBounds();
         bounds.extend(school.marker.getLatLng())
       } else {
         school.marker.remove();

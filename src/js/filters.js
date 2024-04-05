@@ -21,3 +21,26 @@ export var districtFilters = [
     return state.district == feature.properties.district;
   }
 ]
+
+export var districtThemes = {
+  transparent() {
+    return {
+      color: "#999",
+      fillOpacity: .4,
+      weight: 0
+    };
+  },
+  allGray() {
+    return {
+      color: "black",
+      fill: "#888",
+      fillOpacity: .4,
+      weight: 3
+    }
+  },
+  highlighter() {
+    return {
+      color: "var(--seatColor)"
+    }
+  }
+}
