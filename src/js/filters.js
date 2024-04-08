@@ -20,12 +20,13 @@ export var districtFilters = [
     if (!state.district) return true;
     return state.district == feature.properties.district;
   }
-]
+];
 
 export var districtThemes = {
   transparent() {
     return {
       color: "#999",
+      fillColor: "#999",
       fillOpacity: .4,
       weight: 0
     };
@@ -38,9 +39,26 @@ export var districtThemes = {
       weight: 3
     }
   },
+  districtMajority(props) {
+    var palette = {
+      black: "var(--peach)",
+      hispanic: "var(--teal)",
+      white: "var(--purple)"
+    }
+    var { district } = props;
+    var { majority } = window.DEMOGRAPHICS[district];
+    var fillColor = palette[majority] || "#888"
+    return {
+      fillColor,
+      fillOpacity: .8,
+      color: "white",
+      weight: 1
+    }
+  },
   highlighter() {
     return {
-      color: "var(--seatColor)"
+      color: "var(--seatColor)",
+      fillColor: "var(--seatColor)"
     }
   }
 }

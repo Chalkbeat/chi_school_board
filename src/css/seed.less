@@ -38,6 +38,8 @@ path.leaflet-interactive {
       border-radius: 100%;
       box-shadow: 4px 4px 4px fade(black, 20%);
       border: 1px solid black;
+      transition-property: background, border-color;
+      transition-duration: .4s;
 
       [data-school-mode="type"] &.ES { background: @teal; }
       [data-school-mode="type"] &.MS { background: @peach; }

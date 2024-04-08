@@ -123,7 +123,6 @@ function updateMap(data) {
     data.seatLayer.eachLayer(function(layer) {
       var { name } = layer.feature.properties;
       var survives = districtFilters.every(f => f(layer.feature, data));
-      // TODO: get base styles from the custom paint function
       layer.setStyle({
         className: survives ? "" : "hidden",
         ...paint(layer.feature.properties)
