@@ -89,7 +89,10 @@ var loadedSeats = new Promise(async (ok, fail) => {
   layer.addTo(map);
 
   layer.eachLayer(l => {
-    l.on("click", e => state.data.district = l.feature.properties.district);
+    l.on("click", e => {
+      state.data.district = l.feature.properties.district;
+      state.data.selectedSchool = "";
+    });
     l.bindPopup("District " + l.feature.properties.district);
   });
   
