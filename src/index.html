@@ -67,7 +67,6 @@
 
     <script>
       window.BLOCKS = <%= JSON.stringify(Object.fromEntries(archieml.story.scrolling.map(b => [b.slug, b.filter]))) %>
-      window.DEMOGRAPHICS = <%= JSON.stringify(json.demographics) %>;
     </script>
     <script src="app.js" async></script>
     <%= t.include("partials/_analytics.html") %>

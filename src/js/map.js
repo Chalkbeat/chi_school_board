@@ -98,6 +98,12 @@ var loadedSeats = new Promise(async (ok, fail) => {
   ok(layer);
 });
 
+var loadedDistrictDemos = new Promise(async (ok, fail) => {
+  var response = await fetch("./demographics.json");
+  var data = await response.json();
+  state.data.demographics = data;
+});
+
 // load enrollment data
 // this is particularly large, so it needs to be async
 var loadedEnrollment = new Promise(async (ok, fail) => {
@@ -125,7 +131,7 @@ function updateMap(data) {
       var survives = districtFilters.every(f => f(layer.feature, data));
       layer.setStyle({
         className: survives ? "" : "hidden",
-        ...paint(layer.feature.properties)
+        ...paint(layer.feature.properties, data)
       });
       // update after first render
       if (layer._path) layer._path.classList.toggle("hidden", !survives);

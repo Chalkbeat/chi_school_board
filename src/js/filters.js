@@ -11,7 +11,7 @@ export var markerFilters = [
   },
   function districtMatch(data, state) {
     if (!state.district) return true;
-    return data.districts.has(state.district * 1);
+    return data.home_district == state.district;
   }
 ];
 
@@ -39,14 +39,17 @@ export var districtThemes = {
       weight: 3
     }
   },
-  districtMajority(props) {
+  districtMajority(props, state) {
+    if (!state.demographics) {
+      return districtThemes.transparent();
+    }
     var palette = {
       black: "var(--peach)",
       hispanic: "var(--teal)",
       white: "var(--purple)"
     }
     var { district } = props;
-    var { majority } = window.DEMOGRAPHICS[district];
+    var { majority } = state.demographics[district];
     var fillColor = palette[majority] || "#888"
     return {
       fillColor,

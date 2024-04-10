@@ -9,7 +9,7 @@ module.exports = function(grunt) {
   grunt.registerTask("bake", "Generate JSON files with school data for async load", function() {
     grunt.task.requires("json");
 
-    var { profiles, enrollment } = grunt.data.json;
+    var { profiles, enrollment, demographics } = grunt.data.json;
     for (var row of profiles) {
       row.district = row.district ? row.district.split(",").map(Number) : [];
     }
@@ -40,6 +40,7 @@ module.exports = function(grunt) {
 
     grunt.file.write("build/profiles.json", JSON.stringify(profiles));
     grunt.file.write("build/enrollment.json", JSON.stringify(enrollLookup, null, 2));
+    grunt.file.write("build/demographics.json", JSON.stringify(demographics));
   });
 
 }
