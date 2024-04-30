@@ -13,10 +13,10 @@ async function after(...args) {
 // we use these to provide a starting point
 // but also to merge over in the scrolling blocks
 const STATE_DEFAULT = {
-  ES: true,
-  MS: true,
-  HS: true,
-  district: ""
+  district: "",
+  theme: "allGray",
+  schoolTheme: "plain",
+  districtLayer: 10
 };
 export var state = new ReactiveStore({ ...STATE_DEFAULT });
 window.mapState = state;
@@ -68,7 +68,7 @@ var loadedProfiles = new Promise(async (ok, fail) => {
     var marker = new Marker([school.lat, school.long], {
       icon: new DivIcon({
         iconSize: [8, 8],
-        className: ["school-marker", school.category, school.secondary].join(" ")
+        className: ["school-marker", school.category, school.secondary, school.designation].join(" ")
       })
     });
     marker.addTo(map);

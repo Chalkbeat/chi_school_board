@@ -22,20 +22,24 @@ export var districtFilters = [
   }
 ];
 
+const COMMON_STYLES = {
+  color: "#888",
+  fillColor: "#888",
+  fillOpacity: .4,
+  weight: 1
+};
+
 export var districtThemes = {
   transparent() {
     return {
-      color: "#999",
-      fillColor: "#999",
-      fillOpacity: .4,
+      ...COMMON_STYLES,
       weight: 0
     };
   },
   allGray() {
     return {
+      ...COMMON_STYLES,
       color: "black",
-      fill: "#888",
-      fillOpacity: .4,
       weight: 3
     }
   },
@@ -52,14 +56,15 @@ export var districtThemes = {
     var { majority } = state.demographics[district];
     var fillColor = palette[majority] || "#888"
     return {
+      ...COMMON_STYLES,
       fillColor,
       fillOpacity: .8,
       color: "white",
-      weight: 1
     }
   },
   highlighter() {
     return {
+      ...COMMON_STYLES,
       color: "var(--seatColor)",
       fillColor: "var(--seatColor)"
     }

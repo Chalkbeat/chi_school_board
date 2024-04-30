@@ -41,9 +41,27 @@ path.leaflet-interactive {
       transition-property: background, border-color;
       transition-duration: .4s;
 
-      [data-school-mode="type"] &.ES { background: @teal; }
-      [data-school-mode="type"] &.MS { background: @peach; }
-      [data-school-mode="type"] &.HS { background: @purple; }
+      [data-school-mode="type"] & {
+        &.ES { background: @teal; }
+        &.MS { background: @peach; }
+        &.HS { background: @purple; }
+      }
+
+
+      [data-school-mode="designations"] & {
+        background: transparent;
+        opacity: .5;
+
+        &.Exemplary {
+          background: @green;
+          opacity: 1;
+        }
+
+        &.Intensive {
+          background: @red;
+          opacity: 1;
+        }
+      }
     }
   }
 }
