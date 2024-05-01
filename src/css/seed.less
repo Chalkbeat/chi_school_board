@@ -71,8 +71,8 @@ path.leaflet-interactive {
   width: 80%;
   max-width: 600px;
   padding: 20px;
-  background: black;
-  box-shadow: 20px 20px 16px fade(black, 30%);
+  background: fade(black, 80%);
+  box-shadow: 16px 16px 32px fade(black, 30%);
   position: relative;
   z-index: 999;
   color: white;
@@ -84,6 +84,10 @@ path.leaflet-interactive {
   @media @desktop {
     margin-left: 200px;
     max-width: 400px;
+  }
+
+  a {
+    color: @light-teal;
   }
 
   input[value="ES"] { accent-color: @teal; }

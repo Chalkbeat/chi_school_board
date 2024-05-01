@@ -45,8 +45,7 @@ export var districtThemes = {
   allGray() {
     return {
       ...COMMON_STYLES,
-      color: "black",
-      weight: 3
+      color: "black"
     }
   },
   districtMajority(props, state) {
@@ -58,8 +57,8 @@ export var districtThemes = {
       hispanic: "var(--teal)",
       white: "var(--purple)"
     }
-    var { district } = props;
-    var { majority } = state.demographics[district];
+    var { district, sub } = props;
+    var { majority } = state.demographics[sub || district];
     var fillColor = palette[majority] || "#888"
     return {
       ...COMMON_STYLES,
