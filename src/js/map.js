@@ -93,12 +93,14 @@ var loadedSeats = new Promise(async (ok, fail) => {
   layer.addData(twenty);
   layer.addTo(map);
 
+
   layer.eachLayer(l => {
+    var key = l.feature.properties.sub || l.feature.properties.district;
     l.on("click", e => {
-      state.data.district = l.feature.properties.district;
+      state.data.district = key;
       state.data.selectedSchool = "";
     });
-    l.bindPopup("District " + l.feature.properties.district);
+    l.bindPopup("District " + key);
   });
   
   // by adding it to the state data, we trigger a re-render

@@ -24,6 +24,9 @@ export var districtFilters = [
   },
   function singleDistrict(feature, state) {
     if (!state.district) return true;
+    if (typeof state.district == "string" && state.district.match(/\d+[ab]/)) {
+      return state.district == feature.properties.sub;
+    }
     return state.district == feature.properties.district;
   }
 ];
