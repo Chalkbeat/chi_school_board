@@ -15,8 +15,11 @@ async function after(...args) {
 const STATE_DEFAULT = {
   district: "",
   theme: "allGray",
-  schoolTheme: "plain",
-  districtLayer: 10
+  schoolTheme: false,
+  districtLayer: 10,
+  ES: true,
+  MS: true,
+  HS: true
 };
 export var state = new ReactiveStore({ ...STATE_DEFAULT });
 window.mapState = state;
@@ -83,9 +86,11 @@ var loadedProfiles = new Promise(async (ok, fail) => {
 
 // lazy-load the GeoJSON for the districts and connect it to the map
 var loadedSeats = new Promise(async (ok, fail) => {
-  var response = await fetch("./assets/sb3757-intersected.geojson");
-  var data = await response.json();
-  var layer = new GeoJSON(data);
+  var [ ten, twenty ] = await Promise.all(["districts-10", "districts-20"].map(f => {
+    return fetch(`./assets/${f}.geojson`).then(r => r.json());
+  }));
+  var layer = new GeoJSON(ten);
+  layer.addData(twenty);
   layer.addTo(map);
 
   layer.eachLayer(l => {

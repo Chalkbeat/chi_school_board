@@ -6,6 +6,9 @@ Each should expect the data row or feature and the option state object
 */
 
 export var markerFilters = [
+  function showAny(data, state) {
+    return state.schoolTheme;
+  },
   function gradeLevel(data, state) {
     return state[data.category];
   },
@@ -16,6 +19,9 @@ export var markerFilters = [
 ];
 
 export var districtFilters = [
+  function districtRevision(feature, state) {
+    return (state.districtLayer == 20) == ("sub" in feature.properties);
+  },
   function singleDistrict(feature, state) {
     if (!state.district) return true;
     return state.district == feature.properties.district;
