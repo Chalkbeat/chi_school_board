@@ -10,8 +10,25 @@ module.exports = function(grunt) {
     grunt.task.requires("json");
 
     var { profiles, enrollment, demographics } = grunt.data.json;
+    var profileLookup = {};
     for (var row of profiles) {
       row.district = row.district ? row.district.split(",").map(Number) : [];
+      profileLookup[row.id] = row;
+    }
+
+    // transform demographic data
+    for (var k in demographics) {
+      var population = demographics[k];
+      delete population.key;
+      demographics[k] = { population, enrollment: {
+          total: 0,
+          white: 0,
+          black: 0,
+          asian: 0,
+          hispanic: 0,
+          multi: 0
+        }
+      }
     }
 
     // trim and pre-compute enrollment data
@@ -34,6 +51,13 @@ module.exports = function(grunt) {
           asian: row.asian / row.total,
           hispanic: row.hispanic / row.total,
           multi: row.multi / row.total
+        }
+        for (var key of [row.district, row.subdistrict]) {
+          if (!key) continue;
+          var demo = demographics[key];
+          for (var k in item.absolute) {
+            demo.enrollment[k] += item.absolute[k];
+          }
         }
       }
     }
