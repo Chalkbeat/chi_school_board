@@ -62,6 +62,14 @@ module.exports = function(grunt) {
       }
     }
 
+    // convert demo enrollment totals to percents
+    for (var d in demographics) {
+      var demo = demographics[d];
+      for (var r of ["white", "black", "asian", "hispanic", "multi"]) {
+        demo.enrollment[r] = demo.enrollment[r] / demo.enrollment.total;
+      }
+    }
+
     grunt.file.write("build/profiles.json", JSON.stringify(profiles));
     grunt.file.write("build/enrollment.json", JSON.stringify(enrollLookup, null, 2));
     grunt.file.write("build/demographics.json", JSON.stringify(demographics));
