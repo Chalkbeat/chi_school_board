@@ -2,12 +2,6 @@ import "./state-bindings.js"
 import { mergeChanges, state } from "./map.js";
 import $ from "./lib/qsa";
 
-/* TEST BUTTON */
-document.querySelector(".demo-button").addEventListener("click", () => mergeChanges({
-  district: 1,
-  ES: false
-}));
-
 var blocks = $(".scroll-block").reverse();
 var currentBlock = null;
 

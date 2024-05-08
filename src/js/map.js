@@ -9,6 +9,30 @@ async function after(...args) {
   return Promise.all(args).then((result) => callback(...result));
 }
 
+function fetchJSON(url) {
+  return fetch(url).then(r => r.json());
+}
+
+// map setup
+var mapContainer = $.one(".backdrop .map");
+var maxBounds = [[42.188,-88.795], [41.182,-86.627]]
+export var map = new Map(mapContainer, {
+  maxBounds,
+  zoomSnap: .1,
+  scrollWheelZoom: false,
+  maxBoundsViscosity: 1
+});
+map.fitBounds(maxBounds);
+
+var tiles = new TileLayer("./assets/synced/tiles/carto_light_nolabels/{z}/{x}/{y}.png", {
+  minZoom: 9,
+  maxZoom: 13,
+  updateWhenZooming: false,
+  updateWhenIdle: true,
+  attribution: "Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL."
+}).addTo(map);
+window.map = map;
+
 // default map setup values
 // we use these to provide a starting point
 // but also to merge over in the scrolling blocks
@@ -39,32 +63,9 @@ function onMediaQuery() {
 onMediaQuery();
 media.addEventListener("change", onMediaQuery);
 
-// map setup
-var mapContainer = $.one(".backdrop .map");
-var maxBounds = [[42.188,-88.795], [41.182,-86.627]]
-export var map = new Map(mapContainer, {
-  maxBounds,
-  zoomSnap: .1,
-  scrollWheelZoom: false,
-  maxBoundsViscosity: 1
-});
-map.fitBounds(maxBounds);
-
-// https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg
-var tiles = new TileLayer("./assets/synced/tiles/carto_light_nolabels/{z}/{x}/{y}.png", {
-  minZoom: 9,
-  maxZoom: 13,
-  updateWhenZooming: false,
-  updateWhenIdle: true,
-  attribution: "Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL."
-}).addTo(map);
-window.map = map;
-window.tiles = tiles;
-
 // add map markers and link the data together
 var loadedProfiles = new Promise(async (ok, fail) => {
-  var response = await fetch("./profiles.json")
-  var schools = await response.json();
+  var schools = await fetchJSON("./profiles.json");
   state.data.schools = schools;
   for (let school of schools) {
     school.districts = new Set(school.district);
@@ -84,15 +85,24 @@ var loadedProfiles = new Promise(async (ok, fail) => {
   ok(schools);
 });
 
-// lazy-load the GeoJSON for the districts and connect it to the map
-var loadedSeats = new Promise(async (ok, fail) => {
-  var [ ten, twenty ] = await Promise.all(["districts-10", "districts-20"].map(f => {
-    return fetch(`./assets/${f}.geojson`).then(r => r.json());
-  }));
+// load enrollment data
+var loadedEnrollment = fetchJSON("./enrollment.json");
+
+// connect enrollment to schools
+after(loadedProfiles, loadedEnrollment, (schools, enrollment) => {
+  for (var school of schools) {
+    school.enrollment = enrollment[school.id]
+  }
+});
+
+// lazy-load the GeoJSON for the districts and combine 10/20 district layers
+after(
+  fetchJSON("./assets/districts-10.geojson"),
+  fetchJSON("./assets/districts-20.geojson"),
+  (ten, twenty) => {
   var layer = new GeoJSON(ten);
   layer.addData(twenty);
   layer.addTo(map);
-
 
   layer.eachLayer(l => {
     var key = l.feature.properties.sub || l.feature.properties.district;
@@ -108,26 +118,8 @@ var loadedSeats = new Promise(async (ok, fail) => {
   ok(layer);
 });
 
-var loadedDistrictDemos = new Promise(async (ok, fail) => {
-  var response = await fetch("./demographics.json");
-  var data = await response.json();
-  state.data.demographics = data;
-});
-
-// load enrollment data
-// this is particularly large, so it needs to be async
-var loadedEnrollment = new Promise(async (ok, fail) => {
-  var response = await fetch("./enrollment.json");
-  var data = await response.json();
-  ok(data);
-});
-
-// connect enrollment to schools
-after(loadedProfiles, loadedEnrollment, (schools, enrollment) => {
-  for (var school of schools) {
-    school.enrollment = enrollment[school.id]
-  }
-});
+// district demos aren't connected to any other data
+fetchJSON("./demographics.json").then(d => state.data.demographics = d);
 
 // called whenever the reactive state data changes
 function updateMap(data) {
