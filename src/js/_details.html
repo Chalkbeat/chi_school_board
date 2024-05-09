@@ -1,0 +1,38 @@
+<%
+if (data.selectedSchool) {
+  var school = data.selectedSchool;
+  var cats = { ES: "Elementary", MS: "Middle", HS: "High" };
+%>
+<hr>
+Selected School: <%= school.name %>
+<ul>
+  <li> Category: <%= cats[school.category] %> school
+  <li> Type: <%= school.secondary %>
+  <li> Associated district: <%= String(school.home_district || "none").replace(/,/g, ", ") %>
+  <% if (school.enrollment) { %>
+  <li> Enrollment: <%= school.enrollment.absolute.total %> students
+  <% } %>
+</ul>
+<%
+} else if (data.district) {
+  var strings = {
+    black: "Black",
+    white: "white",
+    hispanic: "Hispanic or Latino",
+    none: "No majority"
+  };
+%>
+<hr>
+Selected district: <%= data.district %>
+<ul>
+  <% 
+    if (data.demographics) {
+    var demo = data.demographics[data.district];
+  %>
+  <li> Majority racial demographic: <%= strings[demo.population.majority] %>
+  <li> Majority enrollment demographic: <%= strings[demo.enrollment.majority] %>
+  <% } %>
+</ul>
+<%
+}
+%>

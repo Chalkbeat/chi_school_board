@@ -61,7 +61,26 @@ export var districtThemes = {
       white: "var(--purple)"
     }
     var { district, sub } = props;
-    var { majority } = state.demographics[sub || district];
+    var { majority } = state.demographics[sub || district]?.population;
+    var fillColor = palette[majority] || "#888"
+    return {
+      ...COMMON_STYLES,
+      fillColor,
+      fillOpacity: .8,
+      color: "white",
+    }
+  },
+  enrollmentMajority(props, state) {
+    if (!state.demographics) {
+      return districtThemes.transparent();
+    }
+    var palette = {
+      black: "var(--peach)",
+      hispanic: "var(--teal)",
+      white: "var(--purple)"
+    }
+    var { district, sub } = props;
+    var { majority } = state.demographics[sub || district]?.enrollment;
     var fillColor = palette[majority] || "#888"
     return {
       ...COMMON_STYLES,

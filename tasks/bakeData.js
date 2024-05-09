@@ -65,9 +65,16 @@ module.exports = function(grunt) {
     // convert demo enrollment totals to percents
     for (var d in demographics) {
       var demo = demographics[d];
+      var highest = 0;
+      var majority = "none";
       for (var r of ["white", "black", "asian", "hispanic", "multi"]) {
-        demo.enrollment[r] = demo.enrollment[r] / demo.enrollment.total;
+        var percent = demo.enrollment[r] = demo.enrollment[r] / demo.enrollment.total;
+        if (percent > .5 && percent > highest) {
+          highest = demo.enrollment[r];
+          majority = r;
+        }
       }
+      demo.enrollment.majority = majority;
     }
 
     grunt.file.write("build/profiles.json", JSON.stringify(profiles));

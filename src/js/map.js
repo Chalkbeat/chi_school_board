@@ -115,7 +115,6 @@ after(
   
   // by adding it to the state data, we trigger a re-render
   state.data.seatLayer = layer;
-  ok(layer);
 });
 
 // district demos aren't connected to any other data
