@@ -6,7 +6,10 @@ var blocks = $(".scroll-block").reverse();
 var currentBlock = null;
 
 // add the final filter block, which is just defaults
-window.BLOCKS.filters = { schoolTheme: "type" };
+window.BLOCKS.filters = {
+  schoolTheme: "type",
+  interactive: true
+};
 
 function onScroll(e) {
   for (var b of blocks) {

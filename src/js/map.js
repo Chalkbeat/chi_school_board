@@ -43,7 +43,8 @@ const STATE_DEFAULT = {
   districtLayer: 10,
   ES: true,
   MS: true,
-  HS: true
+  HS: true,
+  interactive: false
 };
 export var state = new ReactiveStore({ ...STATE_DEFAULT });
 window.mapState = state;
@@ -78,7 +79,10 @@ var loadedProfiles = new Promise(async (ok, fail) => {
     marker.addTo(map);
     // TODO: replace this with a detail panel
     marker.bindPopup(school.name);
-    marker.on("click", e => state.data.selectedSchool = school);
+    marker.on("click", e => {
+      if (!state.raw.interactive) return;
+      state.data.selectedSchool = school;
+    });
     marker.data = school;
     school.marker = marker;
   }
@@ -107,6 +111,7 @@ after(
   layer.eachLayer(l => {
     var key = l.feature.properties.sub || l.feature.properties.district;
     l.on("click", e => {
+      if (!state.raw.interactive) return;
       state.data.district = key;
       state.data.selectedSchool = "";
     });
@@ -123,6 +128,8 @@ fetchJSON("./demographics.json").then(d => state.data.demographics = d);
 // called whenever the reactive state data changes
 function updateMap(data) {
   var bounds;
+
+  mapContainer.dataset.interactive = data.interactive;
 
   // paint and filter
   if (data.seatLayer) {
@@ -169,7 +176,10 @@ export function mergeChanges(patch) {
 }
 
 state.addEventListener("update", e => updateMap(e.detail));
-map.on("click", e => state.data.district = state.data.selectedSchool = "");
+map.on("click", e => {
+  if (!state.raw.interactive) return;
+  state.data.district = state.data.selectedSchool = "";
+});
 
 // // Generates a list of tiles to download for local caching
 // var tileBounds = [[42.488,-88.795], [41.182,-86.627]];

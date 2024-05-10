@@ -7,6 +7,14 @@ var renderDetail = dot.compile(templateHTML);
 class DetailBlock extends HTMLElement {
   constructor() {
     super();
+    this.visible = false;
+    var observer = new IntersectionObserver(([e]) => {
+      this.visible = e.isIntersecting;
+      this.onStateUpdate({ detail: state.raw });
+    }, {
+      rootMargin: "30%"
+    });
+    observer.observe(this);
   }
 
   connectedCallback() {
@@ -19,6 +27,7 @@ class DetailBlock extends HTMLElement {
   }
 
   onStateUpdate(e) {
+    if (!this.visible) return;
     this.innerHTML = renderDetail(e.detail);
   }
 }

@@ -40,6 +40,14 @@ path.leaflet-interactive {
       display: none !important;
     }
 
+    &[data-interactive="false"] {
+      pointer-events: none;
+
+      .leaflet-interactive {
+        pointer-events: none !important;
+      }
+    }
+
     .school-marker {
       background: white;
       border-radius: 100%;
