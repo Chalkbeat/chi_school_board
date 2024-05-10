@@ -75,9 +75,9 @@ export var districtThemes = {
       return districtThemes.transparent();
     }
     var palette = {
-      black: "var(--peach)",
-      hispanic: "var(--teal)",
-      white: "var(--purple)"
+      black: "var(--demo-black)",
+      hispanic: "var(--demo-hispanic)",
+      white: "var(--demo-white)"
     }
     var { district, sub } = props;
     var { majority } = state.demographics[sub || district]?.enrollment;

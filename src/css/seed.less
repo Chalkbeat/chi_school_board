@@ -3,6 +3,11 @@
 
 :root {
   --seatColor: @yellow;
+  --demo-black: @peach;
+  --demo-hispanic: @teal;
+  --demo-white: @purple;
+  --demo-asian: @red;
+  --demo-multi: @yellow;
 }
 
 header, footer {
@@ -93,4 +98,73 @@ path.leaflet-interactive {
   input[value="ES"] { accent-color: @teal; }
   input[value="MS"] { accent-color: @peach; }
   input[value="HS"] { accent-color: @purple; }
+}
+
+.district-details {
+  font-family: @sans;
+
+  .white { --demo-color: var(--demo-white); }
+  .black { --demo-color: var(--demo-black); }
+  .asian { --demo-color: var(--demo-asian); }
+  .hispanic { --demo-color: var(--demo-hispanic); }
+  .multi { --demo-color: var(--demo-multi); }
+
+  .key {
+    display: block;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    font-size: 15px;
+
+    li {
+      display: inline-block;
+      margin-right: 16px;
+    }
+
+    i.block {
+      background: var(--demo-color);
+      width: 1em;
+      height: 1em;
+      display: inline-block;
+      border-radius: 100%;
+      margin-right: 4px;
+    }
+  }
+
+  h4 {
+    margin: 0;
+  }
+
+  .demo-bar-container {
+    display: flex;
+    height: 1.5em;
+    background: #CCC;
+
+    .bar {
+      height: 100%;
+      background: var(--demo-color);
+      position: relative;
+
+      .label {
+        display: none;
+        position: absolute;
+        top: 80%;
+        left: 50%;
+        transform: translateX(-50%);
+        pointer-events: none;
+        background: white;
+        background: color-mix(in hsl, var(--demo-color) 50%, white 50%);
+        color: black;
+        padding: 4px;
+        font-size: 13px;
+        z-index: 999;
+        min-width: 100px;
+        text-align: center;
+      }
+
+      &:hover .label {
+        display: block;
+      }
+    }
+  }
 }

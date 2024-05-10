@@ -17,22 +17,59 @@ Selected School: <%= school.name %>
 } else if (data.district) {
   var strings = {
     black: "Black",
-    white: "white",
+    white: "White",
     hispanic: "Hispanic or Latino",
+    asian: "Asian American",
+    multi: "Multiracial",
     none: "No majority"
   };
+  var keys = "black white hispanic asian multi".split(" ");
 %>
 <hr>
-Selected district: <%= data.district %>
-<ul>
-  <% 
-    if (data.demographics) {
+<div class="district-details">
+  Selected district: <%= data.district %>
+  <%
+  if (data.demographics) {
     var demo = data.demographics[data.district];
   %>
-  <li> Majority racial demographic: <%= strings[demo.population.majority] %>
-  <li> Majority enrollment demographic: <%= strings[demo.enrollment.majority] %>
-  <% } %>
-</ul>
-<%
-}
-%>
+  <ul class="key">
+    <% for (var d of keys) { %>
+    <li> <i class="block <%= d %>"></i> <%= strings[d] %>
+    <% } %>
+  </ul>
+
+  <h4>Population demographics</h4>
+  <div class="demo-bar-container">
+    <% for (var d of keys) { %>
+    <div class="bar <%= d %>" style="width: <%= demo.population[d] * 100 %>%">
+      <div class="label"><%= strings[d] %>: <%= (demo.population[d] * 100).toFixed(1) %>%</div>
+    </div>
+    <% } %>
+  </div>
+
+  <h4>Enrollment demographics</h4>
+  <div class="demo-bar-container">
+    <% for (var d of keys) { %>
+    <div class="bar <%= d %>" style="width: <%= demo.enrollment[d] * 100 %>%">
+      <div class="label"><%= strings[d] %>: <%= (demo.enrollment[d] * 100).toFixed(1) %>%</div>
+    </div>
+    <% } %>
+  </div>
+
+
+  <%
+  }
+  %>
+  <ul>
+    <% 
+      if (data.demographics) {
+      var demo = data.demographics[data.district];
+    %>
+    <li> Majority racial demographic: <%= strings[demo.population.majority] %>
+    <li> Majority enrollment demographic: <%= strings[demo.enrollment.majority] %>
+    <% } %>
+  </ul>
+</div>
+  <%
+  }
+  %>
