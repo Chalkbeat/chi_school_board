@@ -7,12 +7,11 @@ var renderDetail = dot.compile(templateHTML);
 class DetailBlock extends HTMLElement {
   constructor() {
     super();
-    
   }
 
   connectedCallback() {
     state.addEventListener("update", this.onStateUpdate.bind(this));
-    this.onUpdateState({ detail: state.raw });
+    this.onStateUpdate({ detail: state.raw });
   }
 
   disconnectedCallback() {
