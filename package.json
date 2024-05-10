@@ -23,7 +23,7 @@
     "dot": "^1.1.2",
     "googleapis": "^84.0.0",
     "grunt": "^1.0.4",
-    "grunt-contrib-connect": "^2.0.0",
+    "grunt-contrib-connect": "^4.0.0",
     "grunt-contrib-watch": "^1.0.0",
     "leaflet": "^1.9.4",
     "less": "^3.9.0",

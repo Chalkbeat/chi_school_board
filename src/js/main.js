@@ -27,17 +27,4 @@ function onScroll(e) {
 window.addEventListener("scroll", onScroll);
 onScroll();
 
-import dot from "./lib/dot";
-import templateHTML from "./_details.html"
-var renderDetail = dot.compile(templateHTML);
-
-var fi = (condition, outcome) => condition
-  ? outcome instanceof Function
-    ? outcome() : outcome
-  : "";
-
-// TODO: this should probably be a component with a better approach to templating
-var detailContainer = $.one(".school-detail");
-state.addEventListener("update", function({ detail: data }) {
-  detailContainer.innerHTML = renderDetail(data);
-});
+import "./detail-block.js";
