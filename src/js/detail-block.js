@@ -7,6 +7,7 @@ var renderDetail = dot.compile(templateHTML);
 class DetailBlock extends HTMLElement {
   constructor() {
     super();
+    this.onStateUpdate = this.onStateUpdate.bind(this);
     this.visible = false;
     var observer = new IntersectionObserver(([e]) => {
       this.visible = e.isIntersecting;
@@ -18,12 +19,12 @@ class DetailBlock extends HTMLElement {
   }
 
   connectedCallback() {
-    state.addEventListener("update", this.onStateUpdate.bind(this));
+    state.addEventListener("update", this.onStateUpdate);
     this.onStateUpdate({ detail: state.raw });
   }
 
   disconnectedCallback() {
-    state.removeEventListener("update", this.onStateUpdate.bind(this));
+    state.removeEventListener("update", this.onStateUpdate);
   }
 
   onStateUpdate(e) {
