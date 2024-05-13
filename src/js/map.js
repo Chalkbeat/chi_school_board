@@ -19,6 +19,7 @@ var maxBounds = [[42.188,-88.795], [41.182,-86.627]]
 export var map = new Map(mapContainer, {
   maxBounds,
   zoomSnap: .1,
+  zoomControl: false,
   scrollWheelZoom: false,
   maxBoundsViscosity: 1,
   dragging: false
@@ -78,11 +79,10 @@ var loadedProfiles = new Promise(async (ok, fail) => {
       })
     });
     marker.addTo(map);
-    // TODO: replace this with a detail panel
-    marker.bindPopup(school.name);
     marker.on("click", e => {
       if (!state.raw.interactive) return;
       state.data.selectedSchool = school;
+      state.data.district = school.home_district;
     });
     marker.data = school;
     school.marker = marker;
@@ -116,7 +116,6 @@ after(
       state.data.district = key;
       state.data.selectedSchool = "";
     });
-    l.bindPopup("District " + key);
   });
   
   // by adding it to the state data, we trigger a re-render

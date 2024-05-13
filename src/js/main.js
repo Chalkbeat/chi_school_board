@@ -30,4 +30,14 @@ function onScroll(e) {
 window.addEventListener("scroll", onScroll);
 onScroll();
 
+// side effects from form interactions
+$.one("#filters").addEventListener("input", function(e) {
+  switch (e.target.name) {
+    case "district":
+      // new district means removing the school
+      state.data.selectedSchool = "";
+    break;    
+  }
+});
+
 import "./detail-block.js";
