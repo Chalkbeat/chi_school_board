@@ -20,7 +20,8 @@ export var map = new Map(mapContainer, {
   maxBounds,
   zoomSnap: .1,
   scrollWheelZoom: false,
-  maxBoundsViscosity: 1
+  maxBoundsViscosity: 1,
+  dragging: false
 });
 map.fitBounds(maxBounds);
 
@@ -129,6 +130,7 @@ fetchJSON("./demographics.json").then(d => state.data.demographics = d);
 function updateMap(data) {
   var bounds;
 
+  // disable click interactions for intro blocks
   mapContainer.dataset.interactive = data.interactive;
 
   // paint and filter
