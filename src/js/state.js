@@ -12,12 +12,11 @@ the URL hash. These updates are live and two-way.
 
 export class ReactiveStore extends EventTarget {
   scheduled = false;
-  #hashMemory = false;
   proxies = new WeakMap();
 
   constructor(initial = {}) {
     super();
-    for (var f of "notify schedule onHashChange".split(" ")) {
+    for (var f of "notify schedule".split(" ")) {
       this[f] = this[f].bind(this);
     }
     var { schedule, proxies } = this;
@@ -70,57 +69,5 @@ export class ReactiveStore extends EventTarget {
     this.scheduled = false;
     // send event
     this.dispatchEvent(new CustomEvent("update", { detail: this.raw }));
-    // if hashing is turned on, serialize state
-    if (this.#hashMemory) {
-      window.location.hash = this.serialize();
-    }
-  }
-
-  serialize() {
-    var params = new URLSearchParams();
-    for (var k in this.raw) {
-      var value = this.raw[k];
-      if (value instanceof Array) {
-        value = JSON.stringify(value);
-      }
-      params.set(k, value);
-    }
-    return params.toString();
-  }
-
-  parse() {
-    var hash = window.location.hash.slice(1);
-    var result = {};
-    var params = new URLSearchParams(hash);
-    for (var [k, v] of params) {
-      if (v[0] == "[") {
-        v = JSON.parse(v);
-      }
-      if (v == "true" || v == "false") {
-        v = v == "true";
-      }
-      result[k] = v;
-    }
-    return result;
-  }
-
-  onHashChange() {
-    // if hashing is not on, skip this
-    if (!this.#hashMemory) return;
-    Object.assign(this.data, this.parse());
-  }
-
-  get hashMemory() {
-    return this.#hashMemory;
-  }
-
-  set hashMemory(enabled) {
-    this.#hashMemory = enabled;
-    if (this.#hashMemory) {
-      this.onHashChange();
-    } else {
-      // clear the hash, maybe?
-      window.location.hash = "";
-    }
   }
 }

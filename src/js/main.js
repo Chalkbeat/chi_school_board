@@ -4,6 +4,8 @@ import $ from "./lib/qsa";
 
 var blocks = $(".scroll-block").reverse();
 var currentBlock = null;
+var filterBlock = $.one("#filters");
+var snapshot = null;
 
 // add the final filter block, which is just defaults
 window.BLOCKS.filters = {
@@ -16,10 +18,18 @@ function onScroll(e) {
     var bounds = b.getBoundingClientRect();
     if (bounds.top < window.innerHeight * .8) {
       if (b == currentBlock) return;
+      if (currentBlock == filterBlock) {
+        // we're leaving the filters, save their state
+        snapshot = Object.fromEntries(Object.entries(state.raw));
+      }
+
       currentBlock = b;
       var { id } = b;
       if (!id) return;
       var filterSetup = window.BLOCKS[id];
+      if (b == filterBlock && snapshot) {
+        filterSetup = snapshot;
+      }
       if (!filterSetup) return;
       mergeChanges(filterSetup);
       document.body.dataset.schoolMode = filterSetup.schoolTheme;
@@ -32,7 +42,7 @@ onScroll();
 
 // side effects from form interactions
 // we don't want to overcomplicate the two-way binding, but some things need to update multiple values
-$.one("#filters").addEventListener("input", function(e) {
+filterBlock.addEventListener("input", function(e) {
   switch (e.target.name) {
     case "district":
       // new district means removing the school

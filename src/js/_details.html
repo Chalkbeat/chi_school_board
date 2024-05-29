@@ -101,20 +101,9 @@ if (data.district) {
       </div>
       <% } %>
     </div>
-
-
     <%
     }
     %>
-    <ul>
-      <% 
-        if (data.demographics) {
-        var demo = data.demographics[data.district];
-      %>
-      <li> Majority racial demographic: <%= strings[demo.population.majority] %>
-      <li> Majority enrollment demographic: <%= strings[demo.enrollment.majority] %>
-      <% } %>
-    </ul>
   </div>
 <%
 }
