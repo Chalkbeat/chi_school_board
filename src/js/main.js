@@ -31,6 +31,7 @@ window.addEventListener("scroll", onScroll);
 onScroll();
 
 // side effects from form interactions
+// we don't want to overcomplicate the two-way binding, but some things need to update multiple values
 $.one("#filters").addEventListener("input", function(e) {
   switch (e.target.name) {
     case "district":

@@ -44,6 +44,7 @@ module.exports = function(grunt) {
           asian: Number(row.asian),
           hispanic: Number(row.hispanic),
           multi: Number(row.multi),
+          year: 2023
         };
         item.percents = {
           white: row.white / row.total,

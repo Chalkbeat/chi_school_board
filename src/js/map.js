@@ -14,6 +14,7 @@ function fetchJSON(url) {
 }
 
 // map setup
+var filterDetails = $.one("#filters detail-block");
 var mapContainer = $.one(".backdrop .map");
 var maxBounds = [[42.188,-88.795], [41.182,-86.627]]
 export var map = new Map(mapContainer, {
@@ -83,6 +84,7 @@ var loadedProfiles = new Promise(async (ok, fail) => {
       if (!state.raw.interactive) return;
       state.data.selectedSchool = school;
       state.data.district = school.home_district;
+      filterDetails.scrollIntoView({ behavior: "smooth", block: "center" });
     });
     marker.data = school;
     school.marker = marker;
@@ -108,6 +110,7 @@ after(
   var layer = new GeoJSON(ten);
   layer.addData(twenty);
   layer.addTo(map);
+  layer.addEventParent(map);
 
   layer.eachLayer(l => {
     var key = l.feature.properties.sub || l.feature.properties.district;
@@ -115,6 +118,7 @@ after(
       if (!state.raw.interactive) return;
       state.data.district = key;
       state.data.selectedSchool = "";
+      filterDetails.scrollIntoView({ behavior: "smooth", block: "center" });
     });
   });
   
@@ -177,8 +181,11 @@ export function mergeChanges(patch) {
 }
 
 state.addEventListener("update", e => updateMap(e.detail));
+var ignoreNext = false;
 map.on("click", e => {
   if (!state.raw.interactive) return;
+  if (ignoreNext) return ignoreNext = false;
+  if (e.propagatedFrom) return ignoreNext = true;
   state.data.district = state.data.selectedSchool = "";
 });
 

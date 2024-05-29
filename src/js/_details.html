@@ -1,3 +1,14 @@
+<%
+  var strings = {
+    black: "Black",
+    white: "White",
+    hispanic: "Hispanic",
+    asian: "Asian American",
+    multi: "Multiracial",
+    none: "No majority"
+  };
+  var keys = "black white hispanic asian multi".split(" ");
+%>
 <div class="details-block">
 <%
 if (data.selectedSchool) {
@@ -6,32 +17,63 @@ if (data.selectedSchool) {
 %>
 <hr>
 <div class="school-details">
-  Selected School: <%= school.name %>
-  <ul>
-    <li> Category: <%= cats[school.category] %> school
-    <li> Type: <%= school.secondary %>
-    <li> Associated district: <%= String(school.home_district || "none").replace(/,/g, ", ") %>
-    <% if (school.enrollment) { %>
-    <li> Enrollment: <%= school.enrollment.absolute.total %> students
+  <h3><%= school.name %></h3>
+  <div class="categories">
+    <%= school.secondary %> <%= cats[school.category] %> school
+  </div>
+  <% if (school.enrollment) { %>
+    <%
+      var { trends } = school.enrollment;
+      var years = trends.map(t => t.year);
+      var values = trends.map(t => t.total);
+      var earliest = Math.min(...years);
+      var latest = Math.max(...years);
+      var span = latest - earliest;
+      var max = Math.max(...values) + 10;
+      var d = trends.map(v => v.year + " " + (max - v.total)).join(" L");
+      var lineD = `M${earliest} ${max - values[0]} L` + d;
+      var areaD = lineD + ` L${latest} ${max} L${earliest} ${max} Z`;
+    %>
+    <div class="enrollment">
+    <h4>Enrollment, <%= earliest%>-<%= latest %></h4>
+    <div class="sparkline-container">
+      <div class="early-label">
+        <%= values[0] %>
+      </div>
+      <svg role="img" aria-hidden="true" preserveAspectRatio="none" viewBox="<%= earliest %> 0 <%= span %> <%= max %>">
+        <path class="area" d="<%= areaD %>" />
+        <path class="line" d="<%= lineD %>" />
+      </svg>
+      <div class="late-label">
+        <%= values.at(-1) %>
+      </div>
+    </div>
+    <% if (school.enrollment.percents) { %>
+    <h4>2023 Student demographics</h4>
+    <ul class="key">
+      <% for (var d of keys) { %>
+      <li> <i class="block <%= d %>"></i> <%= strings[d] %>
+      <% } %>
+    </ul>
+    <div class="demo-bar-container">
+      <% for (var d of keys) { %>
+      <div class="bar <%= d %>" style="width: <%= school.enrollment.percents[d] * 100 %>%">
+        <div class="label"><%= strings[d] %>: <%= (school.enrollment.percents[d] * 100).toFixed(1) %>%</div>
+      </div>
+      <% } %>
+    </div>
+    <% } else { %>
+    School does not have demographic data for 2023.
     <% } %>
-  </ul>
+  <% } %>
 </div>
 <%
 } 
 if (data.district) {
-  var strings = {
-    black: "Black",
-    white: "White",
-    hispanic: "Hispanic or Latino",
-    asian: "Asian American",
-    multi: "Multiracial",
-    none: "No majority"
-  };
-  var keys = "black white hispanic asian multi".split(" ");
 %>
   <hr>
   <div class="district-details">
-    Selected district: <%= data.district %>
+    <h3>District <%= data.district %></h3>
     <%
     if (data.demographics) {
       var demo = data.demographics[data.district];

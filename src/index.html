@@ -22,25 +22,30 @@
 
       <div class="scroll-block" id="filters">
         <state-binding>
-          <% var categories = [
-            ["ES", "Elementary"],
-            ["MS", "Middle School"],
-            ["HS", "High School"]
-          ];%>
-          <% for (var [v, l] of categories) { %>
-          <label>
-            <input type="checkbox" checked value="<%= v %>">
-            <%= l %>
-          </label>
-          <% } %>
-          <hr>
-          <select name="district">
-            <option selected value="">All districts</option>
-            <hr>
-            <% for (var d of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) { %>
-            <option value="<%= d %>">District <%= d%></option>
+          <h4>Filter by school type:</h4>
+          <div class="school-types">
+            <% var categories = [
+              ["ES", "Elementary"],
+              ["MS", "Middle School"],
+              ["HS", "High School"]
+            ];%>
+            <% for (var [v, l] of categories) { %>
+            <label>
+              <input type="checkbox" checked value="<%= v %>">
+              <%= l %>
+            </label>
             <% } %>
-          </select>
+          </div>
+          <div class="district-select">
+            <h4>Select district:</h4>
+            <select name="district">
+              <option selected value="">All districts</option>
+              <hr>
+              <% for (var d of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) { %>
+              <option value="<%= d %>">District <%= d%></option>
+              <% } %>
+            </select>
+          </div>
         </state-binding>
         <detail-block></detail-block>
       </div>
