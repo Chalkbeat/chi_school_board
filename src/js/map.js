@@ -40,7 +40,7 @@ window.map = map;
 // we use these to provide a starting point
 // but also to merge over in the scrolling blocks
 const STATE_DEFAULT = {
-  district: "",
+  _district: "",
   school: "",
   theme: "allGray",
   schoolTheme: false,
@@ -53,14 +53,24 @@ const STATE_DEFAULT = {
 };
 export var state = new ReactiveStore({
   ...STATE_DEFAULT,
+  // these getters/setters implement multi-property relationships
+  // setting the school ID also sets the selectedSchool
   set school(id) {
     var school = state.raw.schools?.find(s => s.id == id);
-    state.data.selectedSchool = school || false;
     state.data.district = school?.home_district || "";
+    state.data.selectedSchool = school || false;
   },
   get school() {
     return this.selectedSchool?.id || "";
-  }
+  },
+  // setting the district resets the school filter
+  set district(number) {
+    this._district = number;
+    this.selectedSchool = false;
+  },
+  get district() {
+    return this._district;
+  },
 });
 window.mapState = state;
 

@@ -40,15 +40,4 @@ function onScroll(e) {
 window.addEventListener("scroll", onScroll);
 onScroll();
 
-// side effects from form interactions
-// we don't want to overcomplicate the two-way binding, but some things need to update multiple values
-filterBlock.addEventListener("input", function(e) {
-  switch (e.target.name) {
-    case "district":
-      // new district means removing the school
-      state.data.selectedSchool = "";
-    break;    
-  }
-});
-
 import "./detail-block.js";
