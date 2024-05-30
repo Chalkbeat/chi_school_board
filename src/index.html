@@ -17,6 +17,16 @@
       <% for (var block of archieml.story.scrolling) { %>
       <div class="scroll-block" id="<%= block.slug %>">
         <%= t.renderMarkdown(block.text) %>
+        <% if (block.includeKey) { %>
+        <div class="detail-block">
+          <h4>Majority demographic:</h4>
+          <ul class="key">
+            <% for (var [c, label] of Object.entries({ black: "Black", hispanic: "Hispanic", white: "White" })) { %>
+            <li> <i class="block <%= c %>"></i> <%= label %>
+            <% } %>
+          </ul>
+        </div>
+        <% } %>
       </div>
       <% } %>
 
