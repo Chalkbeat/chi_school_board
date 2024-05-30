@@ -44,6 +44,7 @@ const STATE_DEFAULT = {
   theme: "allGray",
   schoolTheme: false,
   districtLayer: 10,
+  type: "all",
   ES: true,
   MS: true,
   HS: true,

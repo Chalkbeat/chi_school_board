@@ -28,6 +28,12 @@ class StateBinding extends HTMLElement {
   handleEvent({ target }) {
     var type = target.tagName != "INPUT" ? target.tagName.toLowerCase() : target.type;
     switch (type) {
+      case "radio":
+        var key = target.name;
+        var value = target.value;
+        state.data[key] = value;
+      break;
+      
       case "checkbox":
         var key = target.name || target.value;
         var value = target.checked;
@@ -46,10 +52,13 @@ class StateBinding extends HTMLElement {
   update({ detail }) {
     var inputs = this.querySelectorAll("input, select");
     for (var input of inputs) {
-      if (input.type == "checkbox" || input.type == "radio") {
+      if (input.type == "checkbox") {
         var key = input.name || input.value;
         input.checked = detail[key];
-      } else {
+      } else if (input.type == "radio") {
+        var key = input.name;
+        input.checked = detail[key] == input.value;
+      }else {
         input.value = detail[input.name];
       }
     }

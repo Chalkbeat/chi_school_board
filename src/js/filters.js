@@ -12,10 +12,14 @@ export var markerFilters = [
   function gradeLevel(data, state) {
     return state[data.category];
   },
+  function subcategory(data, state) {
+    if (state.type == "all") return true;
+    return data.secondary == state.type;
+  },
   function districtMatch(data, state) {
     if (!state.district) return true;
     return data.home_district == state.district;
-  }
+  },
 ];
 
 export var districtFilters = [

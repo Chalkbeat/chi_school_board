@@ -125,10 +125,14 @@ path.leaflet-interactive {
 
   .school-types {
     display: flex;
+    margin-bottom: 8px;
 
     input {
-      position: absolute;
-      left: -1000px;
+      accent-color: var(--check-color);
+      @supports selector(label:has(input)) {
+        position: absolute;
+        left: -1000px;
+      }
     }
 
     label {
@@ -137,6 +141,8 @@ path.leaflet-interactive {
       text-align: center;
       border: 1px solid white;
       cursor: pointer;
+      --check-color: @yellow;
+      --check-glyph: black;
 
       &:first-child {
         border-radius: 8px 0 0 8px;
@@ -146,9 +152,14 @@ path.leaflet-interactive {
         border-radius: 0 8px 8px 0;
       }
 
-      &:has(input[value="ES"]) { background: @teal; }
-      &:has(input[value="MS"]) { background: @peach; }
-      &:has(input[value="HS"]) { background: @purple; }
+      &:has(input:checked) {
+        background: var(--check-color);
+        color: var(--check-glyph);
+      }
+
+      &:has(input[value="ES"]) { --check-color: @teal; --check-glyph: white; }
+      &:has(input[value="MS"]) { --check-color: @peach; --check-glyph: white; }
+      &:has(input[value="HS"]) { --check-color: @purple; --check-glyph: white; }
 
       &:has(input:not(:checked)) {
         background: transparent;

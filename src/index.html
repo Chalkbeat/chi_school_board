@@ -35,14 +35,28 @@
         <state-binding>
           <h4>Filter by school type:</h4>
           <div class="school-types">
-            <% var categories = [
-              ["ES", "Elementary"],
-              ["MS", "Middle School"],
-              ["HS", "High School"]
-            ];%>
+            <% var categories = Object.entries({
+              ES: "Elementary",
+              MS: "Middle School",
+              HS: "High School"
+            });%>
             <% for (var [v, l] of categories) { %>
             <label>
               <input type="checkbox" checked value="<%= v %>">
+              <%= l %>
+            </label>
+            <% } %>
+          </div>
+          <div class="school-types">
+            <% var subcats = Object.entries({
+              "all": "All",
+              "alternative": "Alt",
+              "magnet": "Magnet",
+              "charter": "Charter"
+            }); %>
+            <% for (var [v, l] of subcats) { %>
+            <label>
+              <input type="radio" name="type" value="<%= v %>" <% !v ? "checked=true" : "" %>>
               <%= l %>
             </label>
             <% } %>
