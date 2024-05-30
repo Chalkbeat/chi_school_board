@@ -56,17 +56,19 @@ export var state = new ReactiveStore({
   // these getters/setters implement multi-property relationships
   // setting the school ID also sets the selectedSchool
   set school(id) {
-    var school = state.raw.schools?.find(s => s.id == id);
-    state.data.district = school?.home_district || "";
-    state.data.selectedSchool = school || false;
+    var school = this.schools?.find(s => s.id == id);
+    this.district = school?.home_district || "";
+    this.selectedSchool = school || false;
   },
   get school() {
     return this.selectedSchool?.id || "";
   },
   // setting the district resets the school filter
   set district(number) {
-    this._district = number;
-    this.selectedSchool = false;
+    if (number != this._district) {
+      this._district = number;
+      this.selectedSchool = false;
+    }
   },
   get district() {
     return this._district;
@@ -104,10 +106,10 @@ var loadedProfiles = new Promise(async (ok, fail) => {
     marker.addTo(map);
     marker.on("click", e => {
       if (!state.raw.interactive) return;
-      state.data.selectedSchool = school;
-      state.data.district = school.home_district;
+      state.data.school = school.id;
       filterDetails.scrollIntoView({ behavior: "smooth", block: "center" });
     });
+    marker.bindPopup(school.short);
     marker.data = school;
     school.marker = marker;
   }
@@ -193,6 +195,10 @@ function updateMap(data) {
         school.marker.remove();
       }
     }
+  }
+
+  if (data.selectedSchool) {
+    data.selectedSchool.marker.openPopup();
   }
 
   if (bounds) map.flyToBounds(bounds, data.padding);
