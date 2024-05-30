@@ -66,6 +66,7 @@ export class ReactiveStore extends EventTarget {
   }
 
   notify() {
+    console.log(this.raw);
     this.scheduled = false;
     // send event
     this.dispatchEvent(new CustomEvent("update", { detail: this.raw }));

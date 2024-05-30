@@ -41,6 +41,7 @@ window.map = map;
 // but also to merge over in the scrolling blocks
 const STATE_DEFAULT = {
   district: "",
+  school: "",
   theme: "allGray",
   schoolTheme: false,
   districtLayer: 10,
@@ -50,7 +51,17 @@ const STATE_DEFAULT = {
   HS: true,
   interactive: false
 };
-export var state = new ReactiveStore({ ...STATE_DEFAULT });
+export var state = new ReactiveStore({
+  ...STATE_DEFAULT,
+  set school(id) {
+    var school = state.raw.schools?.find(s => s.id == id);
+    state.data.selectedSchool = school || false;
+    state.data.district = school?.home_district || "";
+  },
+  get school() {
+    return this.selectedSchool?.id || "";
+  }
+});
 window.mapState = state;
 
 // padding query

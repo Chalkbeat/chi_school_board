@@ -61,6 +61,15 @@
             </label>
             <% } %>
           </div>
+          <div class="school-search">
+            <h4>Select a school:</h4>
+            <select name="school">
+              <option selected value="">All schools</option>
+              <% for (var school of json.profiles.sort((a, b) => a.name < b.name ? -1 : 1)) { %>
+              <option value="<%= school.id %>"><%= school.name %></option>
+              <% } %>
+            </select>
+          </div>
           <div class="district-select">
             <h4>Select district:</h4>
             <select name="district">
