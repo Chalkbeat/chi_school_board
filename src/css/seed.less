@@ -10,17 +10,16 @@
   --demo-white: @purple;
   --demo-asian: @red;
   --demo-multi: @yellow;
+  --school-es: @teal;
+  --school-ms: @peach;
+  --school-hs: @purple;
 }
 
 header, footer {
   z-index: 999;
 }
 
-path.leaflet-interactive {
-  transition-property: fill, stroke;
-  transition-duration: .4s;
-}
-
+// map styles
 .backdrop {
   position: fixed;
   top: 0;
@@ -48,48 +47,54 @@ path.leaflet-interactive {
       }
     }
 
-    .school-marker {
-      background: white;
-      border-radius: 100%;
-      box-shadow: 4px 4px 4px fade(black, 20%);
-      border: 1px solid black;
-      transition-property: background, border-color;
+    path.leaflet-interactive {
+      transition-property: fill, stroke;
       transition-duration: .4s;
-
-      [data-school-mode="type"] & {
-        &.ES { background: @teal; }
-        &.MS { background: @peach; }
-        &.HS { background: @purple; }
-      }
-
-
-      [data-school-mode="designations"] & {
-        background: transparent;
-        opacity: .5;
-
-        &.Exemplary {
-          background: @green;
-          opacity: 1;
-        }
-
-        &.Intensive {
-          background: @red;
-          opacity: 1;
-        }
-      }
     }
   }
 }
 
+// map graphics in pure CSS
+.school-marker {
+  background: white;
+  border-radius: 100%;
+  box-shadow: 4px 4px 4px fade(black, 20%);
+  border: 1px solid black;
+  transition-property: background, border-color;
+  transition-duration: .4s;
+
+  [data-school-mode="type"] & {
+    &.ES { background: @teal; }
+    &.MS { background: @peach; }
+    &.HS { background: @purple; }
+  }
+
+  [data-school-mode="designations"] & {
+    background: transparent;
+    opacity: .5;
+
+    &.Exemplary {
+      background: @green;
+      opacity: 1;
+    }
+
+    &.Intensive {
+      background: @red;
+      opacity: 1;
+    }
+  }
+}
+
+// text blocks
 .scroll-block {
   margin: 20px auto 80vh;
   width: 80%;
   max-width: 600px;
+  position: relative;
+  z-index: 999;
   padding: 20px;
   background: fade(black, 80%);
   box-shadow: 16px 16px 32px fade(black, 30%);
-  position: relative;
-  z-index: 999;
   color: white;
 
   &:first-child {
@@ -106,6 +111,7 @@ path.leaflet-interactive {
   }
 }
 
+// filter-block UI
 #filters {
   font-family: @sans;
 
