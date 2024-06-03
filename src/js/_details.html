@@ -21,6 +21,9 @@ if (data.selectedSchool) {
   <div class="categories">
     <%= school.secondary %> <%= cats[school.category] %> school
   </div>
+  <div class="rating">
+    Illinois school rating: <b><%= school.designation || "not available" %></b>
+  </div>
   <% if (school.enrollment) { %>
     <%
       var { trends } = school.enrollment;
