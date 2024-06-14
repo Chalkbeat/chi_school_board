@@ -6,7 +6,7 @@
     },
     "live": {
       "bucket": "projects.chalkbeat.org",
-      "path": "2024/chi_school_board"
+      "path": "2024/interactive-map-chicago-school-board-districts"
     }
   },
   "styles": {
@@ -17,7 +17,7 @@
   },
   "title": "Chicago School Board Map",
   "description": "",
-  "url": "",
+  "url": "https://projects.chalkbeat.org/2024/interactive-map-chicago-school-board-districts/",
   "image": "assets/logo.png",
   "analytics": {
     "topicIDs": [],
@@ -29,5 +29,5 @@
     "story": "1iujMj5bk_bvJ3M9VvgSf-1ZsJhB8Zd0FVwGQyy-0384"
   },
   "embedded": false,
-  "production": false
+  "production": true
 }
