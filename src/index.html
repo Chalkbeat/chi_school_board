@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en-US">
   <head>
-    <%= t.include("partials/_head.html", grunt.data.json.project) %>
+    <%= t.include("partials/_head.html", { ...grunt.data.json.project, ...archieml.story.metadata }) %>
     <link rel="stylesheet" type="text/css" href="style.css">
   </head>
   <body>
@@ -13,6 +13,25 @@
       <div class="map"></div>
     </div>
     <main>
+
+      <div class="hero">
+        <div class="splash"></div>
+        <div class="titles">
+          <h1><%= archieml.story.metadata.page_title %></h1>
+          <h2><%= archieml.story.metadata.description %></h2>
+
+          <div class="bylines">
+            <%= archieml.story.metadata.bylines.join(" &bull; ") %>
+          </div>
+
+          <div class="scroll-bug">
+            <svg viewBox="0 0 10 6" >
+              <path d="M0,0 L5,6 L10,0" vector-effect="non-scaling-stroke" stroke="currentColor" fill="none" />
+            </svg>
+            Scroll for more
+          </div>
+        </div>
+      </div>
 
       <% for (var block of archieml.story.scrolling) { %>
       <div class="scroll-block" id="<%= block.slug %>">
@@ -32,9 +51,12 @@
 
       <div class="scroll-block" id="filters">
         <h2>Explore for yourself</h2>
+        <p class="chatter">
+          Tap a school or district for more information about it.
+        </p>
         <state-binding>
           <h4>Filter by school type:</h4>
-          <div class="school-types">
+          <div class="school-types pillbox">
             <% var categories = Object.entries({
               ES: "Elementary",
               MS: "Middle School",
@@ -47,7 +69,7 @@
             </label>
             <% } %>
           </div>
-          <div class="school-types">
+          <div class="school-types pillbox">
             <% var subcats = Object.entries({
               "all": "All",
               "alternative": "Alt",
@@ -60,6 +82,17 @@
               <%= l %>
             </label>
             <% } %>
+          </div>
+          <h4>Color schools based on:</h4>
+          <div class="view-mode pillbox">
+            <label>
+              <input type="radio" name="schoolTheme" value="type">
+              Grade level
+            </label>
+            <label>
+              <input type="radio" name="schoolTheme" value="designations">
+              IL rating
+            </label>
           </div>
           <div class="school-search">
             <h4>Select a school:</h4>

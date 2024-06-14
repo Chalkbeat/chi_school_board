@@ -32,7 +32,6 @@ function onScroll(e) {
       }
       if (!filterSetup) return;
       mergeChanges(filterSetup);
-      document.body.dataset.schoolMode = filterSetup.schoolTheme;
       break;
     }
   }

@@ -153,12 +153,16 @@ after(
 // district demos aren't connected to any other data
 fetchJSON("./demographics.json").then(d => state.data.demographics = d);
 
+var lastBounds = null;
+
 // called whenever the reactive state data changes
 function updateMap(data) {
   var bounds;
 
   // disable click interactions for intro blocks
   mapContainer.dataset.interactive = data.interactive;
+  // set the marker theme
+  document.body.dataset.schoolMode = data.schoolTheme;
 
   // paint and filter
   if (data.seatLayer) {
@@ -201,7 +205,8 @@ function updateMap(data) {
     data.selectedSchool.marker.openPopup();
   }
 
-  if (bounds) map.flyToBounds(bounds, data.padding);
+  if (bounds && (!bounds.equals(lastBounds))) map.flyToBounds(bounds, data.padding);
+  lastBounds = bounds;
 }
 
 export function mergeChanges(patch) {
