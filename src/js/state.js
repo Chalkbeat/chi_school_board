@@ -5,9 +5,6 @@ the .data property will cause the object to queue an "update" event. You can
 bypass the proxy by talking to .raw, but you'll need to call schedule
 () afterward. 
 
-If the state object's .hashMemory property is set to true, it will also mirror
-the URL hash. These updates are live and two-way.
-
 */
 
 export class ReactiveStore extends EventTarget {

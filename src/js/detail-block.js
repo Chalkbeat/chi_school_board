@@ -13,7 +13,7 @@ class DetailBlock extends HTMLElement {
       this.visible = e.isIntersecting;
       this.onStateUpdate({ detail: state.raw });
     }, {
-      rootMargin: "30%"
+      // rootMargin: "30%"
     });
     observer.observe(this);
   }
