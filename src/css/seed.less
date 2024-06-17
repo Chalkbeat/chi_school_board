@@ -82,6 +82,25 @@ header, footer {
     color: white;
   }
 
+  button.share {
+    appearance: none;
+    -webkit-appearance: none;
+    background: transparent;
+    border: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    text-transform: uppercase;
+    font-size: 14px;
+    margin: 12px auto;
+    gap: 8px;
+    cursor: pointer;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
   .scroll-bug {
 
     @keyframes bug-bob {

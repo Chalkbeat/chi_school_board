@@ -40,3 +40,15 @@ window.addEventListener("scroll", onScroll);
 onScroll();
 
 import "./detail-block.js";
+
+var shareButton = $.one("button.share");
+if ("share" in navigator) {
+  shareButton.toggleAttribute("hidden", false);
+  shareButton.addEventListener("click", () => {
+    navigator.share({
+      url: window.location.href,
+      title: `Chalkbeat Chicago: ${document.title}`,
+      text: `${document.title}: ${window.location.href}`
+    });
+  });
+}
