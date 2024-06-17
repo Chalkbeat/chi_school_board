@@ -91,6 +91,25 @@ export var districtThemes = {
       fillColor,
       fillOpacity: .8,
       color: "white",
+    };
+  },
+  subdistricts(props) {
+    return {
+      ...COMMON_STYLES,
+      fillColor: props.sub && props.sub.match(/b/) ? "#F77575" : "#19AB76"
+    };
+  },
+  stripe(props) {
+    var colors = [
+      "#19AB76",
+      "#F79C75",
+      "#828282",
+      "#855279",
+      "#F4C96C"
+    ];
+    return {
+      ...COMMON_STYLES,
+      fillColor: colors[props.district % colors.length]
     }
   },
   highlighter() {
