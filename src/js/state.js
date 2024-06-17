@@ -13,9 +13,8 @@ export class ReactiveStore extends EventTarget {
 
   constructor(initial = {}) {
     super();
-    for (var f of "notify schedule".split(" ")) {
-      this[f] = this[f].bind(this);
-    }
+    this.notify = this.notify.bind(this);
+    this.schedule = this.schedule.bind(this);
     var { schedule, proxies } = this;
     var handler = {
       get(target, property, receiver) {
@@ -53,7 +52,6 @@ export class ReactiveStore extends EventTarget {
     }
     this.raw = initial;
     this.data = new Proxy(this.raw, handler);
-    window.addEventListener("hashchange", this.onHashChange);
   }
 
   schedule() {
