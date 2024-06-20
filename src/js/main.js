@@ -1,6 +1,7 @@
 import "./state-bindings.js"
 import { mergeChanges, state } from "./map.js";
 import $ from "./lib/qsa";
+import "./geolocate-me.js";
 
 var blocks = $(".scroll-block").reverse();
 var currentBlock = null;

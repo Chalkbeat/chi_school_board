@@ -34,7 +34,8 @@
     "rollup": "^2.70.2",
     "shelljs": "^0.8.3",
     "through2": "^3.0.1",
-    "typogr": "^0.6.4"
+    "typogr": "^0.6.4",
+    "wherewolf": "^1.0.3"
   },
   "browserify": {
     "transform": [

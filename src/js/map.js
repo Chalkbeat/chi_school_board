@@ -1,7 +1,9 @@
 import { Map, Marker, GeoJSON, DivIcon, LatLngBounds, TileLayer } from "leaflet/dist/leaflet-src.esm.js";
+import Wherewolf from "wherewolf";
 import $ from "./lib/qsa.js";
 import { ReactiveStore } from "./state.js";
 import { markerFilters, districtFilters, districtThemes } from "./filters.js";
+
 
 // utility function for async dependencies
 async function after(...args) {
@@ -36,6 +38,9 @@ var tiles = new TileLayer("./assets/synced/tiles/carto_light_nolabels/{z}/{x}/{y
 }).addTo(map);
 window.map = map;
 
+// padding query
+var media = window.matchMedia("(max-width: 600px)");
+
 // default map setup values
 // we use these to provide a starting point
 // but also to merge over in the scrolling blocks
@@ -51,6 +56,7 @@ const STATE_DEFAULT = {
   HS: true,
   interactive: false
 };
+
 export var state = new ReactiveStore({
   ...STATE_DEFAULT,
   // these getters/setters implement multi-property relationships
@@ -73,23 +79,18 @@ export var state = new ReactiveStore({
   get district() {
     return this._district;
   },
+  get padding() {
+    if (media.matches) {
+      return { padding: [50, 50] };
+    } else {
+      return {
+        paddingTopLeft: [window.innerWidth / 2, 100],
+        paddingBottomRight: [100, 100]
+      };
+    }
+  }
 });
 window.mapState = state;
-
-// padding query
-var media = window.matchMedia("(max-width: 600px)");
-function onMediaQuery() {
-  if (media.matches) {
-    state.raw.padding = { padding: [50, 50] };
-  } else {
-    state.raw.padding = {
-      paddingTopLeft: [window.innerWidth / 2, 100],
-      paddingBottomRight: [100, 100]
-    };
-  }
-}
-onMediaQuery();
-media.addEventListener("change", onMediaQuery);
 
 // add map markers and link the data together
 var loadedProfiles = new Promise(async (ok, fail) => {
@@ -131,6 +132,12 @@ after(
   fetchJSON("./assets/districts-10.geojson"),
   fetchJSON("./assets/districts-20.geojson"),
   (ten, twenty) => {
+  var wolf = new Wherewolf();
+  console.log(ten);
+  wolf.add("2024", ten);
+  wolf.add("2026", twenty);
+  state.raw.wolf = wolf;
+
   var layer = new GeoJSON(ten);
   layer.addData(twenty);
   layer.addTo(map);
