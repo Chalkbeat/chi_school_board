@@ -58,7 +58,7 @@ class StateBinding extends HTMLElement {
       } else if (input.type == "radio") {
         var key = input.name;
         input.checked = detail[key] == input.value;
-      }else {
+      } else {
         input.value = detail[input.name];
       }
     }
