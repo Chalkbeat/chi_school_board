@@ -21,7 +21,7 @@
     "commonmark": "^0.24.0",
     "csv-parse": "^5.3.0",
     "dot": "^1.1.2",
-    "googleapis": "^84.0.0",
+    "googleapis": "^144.0.0",
     "grunt": "^1.0.4",
     "grunt-contrib-connect": "^4.0.0",
     "grunt-contrib-watch": "^1.0.0",
